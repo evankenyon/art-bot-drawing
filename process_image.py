@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[9]:
+# In[1]:
 
 
 # all this code was borrowed from 
@@ -12,6 +12,7 @@ import numpy as np
 import pyautogui as pg
 import kdtree
 import operator
+from cnc import CNC
 
 class AutoDraw(object):
     def __init__(self, name, blur = 0):
@@ -97,13 +98,14 @@ class AutoDraw(object):
         point = self.translate(self.curr_pos)
         self.commands.append(point)
 
-        print('Please change pen to thin and color to black.')
-        input("Press enter once ready")
-        print('')
+#         print('Please change pen to thin and color to black.')
+#         input("Press enter once ready")
+#         print('')
 
         # DRAW THE BLACK OUTLINE
         self.createPath()
-        print(self.commands)
+        return self.commands
+#         print(self.commands)
 #         input("Ready! Press Enter to draw")
 #         print('5 seconds until drawing beings')
 #         time.sleep(5)
@@ -172,23 +174,38 @@ class AutoDraw(object):
         return point[0] / norm, point[1] / norm
 
 
-# In[10]:
+# In[2]:
 
 
 drawing = AutoDraw("./dog.jpeg")
-drawing.drawOutline()
+commands = drawing.drawOutline()
 
 
-# In[ ]:
+# In[11]:
 
 
+print(commands)
 
 
-
-# In[3]:
-
+# In[10]:
 
 
+cnc = CNC()
+cnc.open("./test.gcode")
+
+cnc.g90()
+cnc.g0(z=5)
+cnc.f(3000)
+cnc.g1(z=0)
+for command in commands:
+    if command == 'UP':
+        cnc.up()
+    elif command == 'DOWN':
+        cnc.down()
+    else:
+        cnc.g1(x=command[0],y=command[1])
+
+cnc.close()
 
 
 # In[ ]:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[17]:
 
 
 # all this code was borrowed from 
@@ -13,6 +13,8 @@ import pyautogui as pg
 import kdtree
 import operator
 from cnc import CNC
+from sklearn.cluster import KMeans
+from collections import defaultdict
 
 class AutoDraw(object):
     def __init__(self, name, blur = 0):
@@ -172,22 +174,66 @@ class AutoDraw(object):
         norm = (point[0] ** 2 + point[1] ** 2)
         norm = np.sqrt(norm)
         return point[0] / norm, point[1] / norm
+    
+    def draw(self):
+        if self.with_color:
+            color = self.rescale(self.img, self.pseudoDim)
+            collapsed = np.sum(color, axis=2)/3
+            fill = np.argwhere(collapsed < 230)  # color 2-d indices
+            fill = np.swapaxes(fill, 0, 1)  # swap to index into color
+            RGB = color[fill[0], fill[1], :]
+            k_means = KMeans(n_clusters=self.num_colors).fit(RGB)
+            colors = k_means.cluster_centers_
+            labels = k_means.labels_
+            fill = np.swapaxes(fill, 0, 1).tolist()  # swap back to make dictionary
+            label_2_index = defaultdict(list)
+
+            for i, j in zip(labels, fill):
+                label_2_index[i].append(j)
+
+            for (i, color) in enumerate(colors):
+                # Grayscale conversion formula found at 
+                # https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
+                grayscale = 0.299 * color[2] + 0.587 * color[1] + 0.114 * color[0]
+#                 print(grayscale)
+#                 print('Please change the pen to thick and color to BGR (not RGB) values: ', color)
+#                 input("Press enter once ready")
+#                 print('')
+
+                points = label_2_index[i]
+                index_tuples = map(tuple, points)
+                self.hashSet = set(index_tuples)
+                self.KDTree = create(points)
+                self.commands = []
+                self.curr_pos = (0, 0)
+                point = self.translate(self.curr_pos)
+                self.commands.append(point)
+                self.commands.append("UP")
+                self.createPath()
+
+#                 input('Ready! Press enter to draw: ')
+#                 print('5 seconds until drawing begins...')
+#                 time.sleep(5)
+#                 self.execute(self.commands)
+            return self.commands
+            if self.outline_again:
+                self.drawOutline()
 
 
-# In[2]:
+# In[18]:
 
 
-drawing = AutoDraw("./dog.jpeg")
+drawing = AutoDraw("./castle.jpeg", blur=2)
 commands = drawing.drawOutline()
 
 
-# In[11]:
+# In[19]:
 
 
 print(commands)
 
 
-# In[10]:
+# In[20]:
 
 
 cnc = CNC()
@@ -206,6 +252,12 @@ for command in commands:
         cnc.g1(x=command[0],y=command[1])
 
 cnc.close()
+
+
+# In[ ]:
+
+
+drawing.draw()
 
 
 # In[ ]:

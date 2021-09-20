@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[17]:
+# In[45]:
 
 
 # all this code was borrowed from 
@@ -34,7 +34,8 @@ class AutoDraw(object):
 
 #         self.dim = pg.size()
 
-        self.dim = (100, 100)
+        # 30 cm x 18 cm
+        self.dim = (250, 150)
 
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
@@ -106,6 +107,7 @@ class AutoDraw(object):
 
         # DRAW THE BLACK OUTLINE
         self.createPath()
+#         self.cleanCommands()
         return self.commands
 #         print(self.commands)
 #         input("Ready! Press Enter to draw")
@@ -146,6 +148,13 @@ class AutoDraw(object):
             self.hashSet.remove(new)
 #             print('Making path...number points left: ', len(self.hashSet))
         return
+
+#     def cleanCommands(self):
+#         self.commands = self.commands[2:]
+#         for command in self.commands:
+#             if(type(command) is not str):
+#                 command[0] -= 25
+#                 command[1] -=25
 
     def isValid(self, delta):
         return len(delta) == 2
@@ -203,7 +212,7 @@ class AutoDraw(object):
                 points = label_2_index[i]
                 index_tuples = map(tuple, points)
                 self.hashSet = set(index_tuples)
-                self.KDTree = create(points)
+                self.KDTree = kdtree.create(points)
                 self.commands = []
                 self.curr_pos = (0, 0)
                 point = self.translate(self.curr_pos)
@@ -220,36 +229,62 @@ class AutoDraw(object):
                 self.drawOutline()
 
 
-# In[18]:
+# In[46]:
 
 
-drawing = AutoDraw("./castle.jpeg", blur=2)
+drawing = AutoDraw("./landscape.jpeg", blur=2)
 commands = drawing.drawOutline()
 
 
-# In[19]:
+# In[47]:
 
 
 print(commands)
 
 
-# In[20]:
+# In[53]:
 
 
 cnc = CNC()
 cnc.open("./test.gcode")
 
+# cnc.render_text_file(open("./test.txt", "r"), 5)
 cnc.g90()
 cnc.g0(z=5)
 cnc.f(3000)
-cnc.g1(z=0)
-for command in commands:
-    if command == 'UP':
-        cnc.up()
-    elif command == 'DOWN':
-        cnc.down()
+cnc.g0(z=5)
+# cnc.g1(z=0)
+prevNonUpOrDownCommand = (0, 0)
+newCommands = [] 
+for index in range(len(commands)):
+    if(prevNonUpOrDownCommand == commands[index]):
+        continue
+    if commands[index] == 'UP':
+        if commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+            newCommands.append(commands[index])
+#             cnc.up()
+    elif commands[index] == 'DOWN':
+        if commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+            newCommands.append(commands[index])
+#             cnc.down()
     else:
-        cnc.g1(x=command[0],y=command[1])
+#         cnc.g1(x=commands[index][1] - 15,y=-commands[index][0] + 15)
+        newCommands.append(commands[index])
+        prevNonUpOrDownCommand = commands[index]
+
+for index in range(len(newCommands)):
+    if newCommands[index] == 'UP':
+        if newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
+#             newCommands.append(commands[index])
+            cnc.up()
+    elif newCommands[index] == 'DOWN':
+        if newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
+#             newCommands.append(commands[index])
+            cnc.down()
+    else:
+        cnc.g1(x=newCommands[index][1] - 15,y=-newCommands[index][0] + 45)
+#         newCommands.append(commands[index])
+#         prevNonUpOrDownCommand = commands[index]
 
 cnc.close()
 

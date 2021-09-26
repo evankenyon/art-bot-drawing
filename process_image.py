@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[45]:
+# In[4]:
 
 
 # all this code was borrowed from 
@@ -35,7 +35,7 @@ class AutoDraw(object):
 #         self.dim = pg.size()
 
         # 30 cm x 18 cm
-        self.dim = (250, 150)
+        self.dim = (250, 175)
 
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
@@ -229,24 +229,18 @@ class AutoDraw(object):
                 self.drawOutline()
 
 
-# In[46]:
+# In[5]:
 
 
 drawing = AutoDraw("./landscape.jpeg", blur=2)
 commands = drawing.drawOutline()
 
 
-# In[47]:
-
-
-print(commands)
-
-
-# In[53]:
+# In[6]:
 
 
 cnc = CNC()
-cnc.open("./test.gcode")
+cnc.open("./landscape.gcode")
 
 # cnc.render_text_file(open("./test.txt", "r"), 5)
 cnc.g90()

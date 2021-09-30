@@ -1,7 +1,20 @@
+# Instructions on how to use:
+# 1. Go into directory that contains this folder (i.e. Robot-Draw)
+# 2. Run the command "python process_image.py *image file path* *gcode file path* *blur*"
+# Blur is an optional argument (it is 0 by default, and can be between 0 and 2)
+# The image file path needs to already exist, i.e. you should have an image
+# ready for processing. However, the gcode file path does not have to exist.
+# If it already does, then it will be overwritten. If it doesn't, it will be
+# created. 
+# Example usage: python process_image.py ./aang.png ./aang.gcode
+# The example usage would take in aang.png (located in the Robot-Draw folder
+# as denoted by the "./") and output the gcode into the aang.gcode file (
+# also in the Robot-Draw folder).
+
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[102]:
 
 
 # all this code was borrowed from 
@@ -15,14 +28,16 @@ import operator
 from cnc import CNC
 from sklearn.cluster import KMeans
 from collections import defaultdict
+import os, sys
 
 class AutoDraw(object):
     def __init__(self, name, blur = 0):
         # Tunable parameters
         self.detail = 1
-        self.scale = 7/12
+#         self.scale = 7/12
+        self.scale = 1
         self.sketch_before = False
-        self.with_color = True
+        self.with_color = False
         self.num_colors = 10
         self.outline_again = False
 
@@ -35,14 +50,17 @@ class AutoDraw(object):
 #         self.dim = pg.size()
 
         # 30 cm x 18 cm
-        self.dim = (250, 175)
+        xRatio = 18/30
+        yDim = 165
+        xDim = yDim * xRatio
+        self.dim = (yDim, xDim)
 
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
-        self.startY = ((1 - self.scale) / 2)*self.dim[1] 
-        self.dim = (self.dim[0] * self.scale, self.dim[1] * self.scale)
+        self.startY = ((1 - self.scale) / 2)*self.dim[1]
+#         self.dim = (self.dim[0] * self.scale, self.dim[1] * self.scale)
 
-        # fit the picture into this section of the screen
+#         fit the picture into this section of the screen
         if self.img_shape[1] > self.img_shape[0]:
             # if it's taller that it is wide, truncate the wide section
             self.dim = (int(self.dim[1] * (self.img_shape[0] / self.img_shape[1])), self.dim[1])
@@ -62,8 +80,8 @@ class AutoDraw(object):
 
         # Create Outline
         self.drawing = self.process_img(self.img)
-        plt.imshow(self.drawing)
-        plt.show()
+        # plt.imshow(self.drawing)
+        # plt.show()
 
     def rescale(self, img, dim):
         resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
@@ -199,8 +217,14 @@ class AutoDraw(object):
 
             for i, j in zip(labels, fill):
                 label_2_index[i].append(j)
-
+            
+            
             for (i, color) in enumerate(colors):
+                
+                print(color[2])
+                print(color[1])
+                print(color[0])
+                print("\n")
                 # Grayscale conversion formula found at 
                 # https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
                 grayscale = 0.299 * color[2] + 0.587 * color[1] + 0.114 * color[0]
@@ -218,6 +242,13 @@ class AutoDraw(object):
                 point = self.translate(self.curr_pos)
                 self.commands.append(point)
                 self.commands.append("UP")
+                if(color[2] >= color[1] and color[2] >= color[0]):
+                    # print("test")
+                    self.commands.append("BLUE");
+                if(color[1] >= color[2] and color[1] >= color[0]):
+                    self.commands.append("GREEN");
+                if(color[0] >= color[2] and color[0] >= color[1]):
+                    self.commands.append("RED");
                 self.createPath()
 
 #                 input('Ready! Press enter to draw: ')
@@ -229,64 +260,81 @@ class AutoDraw(object):
                 self.drawOutline()
 
 
-# In[5]:
+# In[62]:
 
 
-drawing = AutoDraw("./landscape.jpeg", blur=2)
-commands = drawing.drawOutline()
+def main(image_file_path, gcode_file_path, blur=0):
+    drawing = AutoDraw(image_file_path, blur=blur)
+    commands = drawing.drawOutline()
+    
+    cnc = CNC()
+    cnc.open(gcode_file_path)
 
-
-# In[6]:
-
-
-cnc = CNC()
-cnc.open("./landscape.gcode")
-
-# cnc.render_text_file(open("./test.txt", "r"), 5)
-cnc.g90()
-cnc.g0(z=5)
-cnc.f(3000)
-cnc.g0(z=5)
-# cnc.g1(z=0)
-prevNonUpOrDownCommand = (0, 0)
-newCommands = [] 
-for index in range(len(commands)):
-    if(prevNonUpOrDownCommand == commands[index]):
-        continue
-    if commands[index] == 'UP':
-        if commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+    cnc.g90()
+    cnc.g0(z=5)
+    cnc.f(3000)
+    cnc.g0(z=5)
+    # cnc.g1(z=0)
+    prevNonUpOrDownCommand = (0, 0)
+    newCommands = [] 
+    for index in range(len(commands)):
+        if(prevNonUpOrDownCommand == commands[index]):
+            continue
+        if commands[index] == 'UP':
+            if index + 1 == len(commands):
+                newCommands.append(commands[index])
+            elif commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+                newCommands.append(commands[index])
+    #             cnc.up()
+        elif commands[index] == 'DOWN':
+            if index + 1 == len(commands):
+                newCommands.append(commands[index])
+            elif commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+                newCommands.append(commands[index])
+        else:
             newCommands.append(commands[index])
-#             cnc.up()
-    elif commands[index] == 'DOWN':
-        if commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
-            newCommands.append(commands[index])
-#             cnc.down()
-    else:
-#         cnc.g1(x=commands[index][1] - 15,y=-commands[index][0] + 15)
-        newCommands.append(commands[index])
-        prevNonUpOrDownCommand = commands[index]
+            prevNonUpOrDownCommand = commands[index]
 
-for index in range(len(newCommands)):
-    if newCommands[index] == 'UP':
-        if newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-#             newCommands.append(commands[index])
-            cnc.up()
-    elif newCommands[index] == 'DOWN':
-        if newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-#             newCommands.append(commands[index])
-            cnc.down()
-    else:
-        cnc.g1(x=newCommands[index][1] - 15,y=-newCommands[index][0] + 45)
-#         newCommands.append(commands[index])
-#         prevNonUpOrDownCommand = commands[index]
-
-cnc.close()
+    for index in range(len(newCommands)):
+        if newCommands[index] == 'UP':
+            if index + 1 == len(newCommands):
+                cnc.up()
+            elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
+                cnc.up()
+        elif newCommands[index] == 'DOWN':
+            if index + 1 == len(newCommands):
+                cnc.down()
+            elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
+                cnc.down()
+        else:
+            cnc.g1(x=newCommands[index][1],y=-newCommands[index][0])
+ 
+    cnc.close()
 
 
 # In[ ]:
 
 
-drawing.draw()
+if __name__ == '__main__':
+
+    import argparse
+
+    visualizer_parser = argparse.ArgumentParser()
+
+    visualizer_parser.add_argument('image_file_path', type=str, help="Path to image file you would like turned into G-Code")
+    visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
+    visualizer_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
+
+    args = visualizer_parser.parse_args()
+    image_file_path = args.image_file_path
+    gcode_file_path = args.gcode_file_path
+    blur = args.blur
+
+    if not os.path.isfile(image_file_path):
+        print("The image file specified does not exist on this path.")
+        sys.exit()
+
+    main(image_file_path, gcode_file_path, blur)
 
 
 # In[ ]:

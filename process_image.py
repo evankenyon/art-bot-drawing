@@ -27,7 +27,7 @@ import operator
 from cnc import CNC
 from sklearn.cluster import KMeans
 from collections import defaultdict
-import os, sys
+import os, sys, time
 
 class AutoDraw(object):
     def __init__(self, name, blur = 0):
@@ -36,7 +36,7 @@ class AutoDraw(object):
 #         self.scale = 7/12
         self.scale = 1
         self.sketch_before = False
-        self.with_color = False
+        self.with_color = True
         self.num_colors = 10
         self.outline_again = False
 
@@ -71,6 +71,40 @@ class AutoDraw(object):
         ratio = self.img.shape[0] / self.img.shape[1]
         pseudo_x = int(self.img.shape[1] * self.detail)
         self.pseudoDim = (pseudo_x, int(pseudo_x * ratio))
+
+# Tunable parameters
+        # self.detail = 1
+        # self.scale = 7/12
+        # self.sketch_before = False
+        # self.with_color = True
+        # self.num_colors = 10
+        # self.outline_again = False
+
+        # # Load Image. Switch axes to match computer screen
+        # self.img = cv2.imread(name)
+        # self.blur = blur
+        # self.img = np.swapaxes(self.img, 0, 1)
+        # self.img_shape = self.img.shape
+
+        # self.dim = pg.size()
+
+        # # Scale to draw inside part of screen
+        # self.startX = ((1 - self.scale) / 2)*self.dim[0] 
+        # self.startY = ((1 - self.scale) / 2)*self.dim[1] 
+        # self.dim = (self.dim[0] * self.scale, self.dim[1] * self.scale)
+
+        # # fit the picture into this section of the screen
+        # if self.img_shape[1] > self.img_shape[0]:
+        #     # if it's taller that it is wide, truncate the wide section
+        #     self.dim = (int(self.dim[1] * (self.img_shape[0] / self.img_shape[1])), self.dim[1])
+        # else:
+        #     # if it's wider than it is tall, truncate the tall section
+        #     self.dim = (self.dim[0], int(self.dim[0] *(self.img_shape[1] / self.img_shape[0])))
+
+        # # Get dimension to translate picture. Dimension 1 and 0 are switched due to comp dimensions
+        # ratio = self.img.shape[0] / self.img.shape[1]
+        # pseudo_x = int(self.img.shape[1] * self.detail)
+        # self.pseudoDim = (pseudo_x, int(pseudo_x * ratio))
         
           # Initialize directions for momentum when creating path
         self.maps = {0: (1, 1), 1: (1, 0), 2: (1, -1), 3: (0, -1), 4: (0, 1), 5: (-1, -1), 6: (-1, 0), 7: (-1, 1)}
@@ -133,6 +167,23 @@ class AutoDraw(object):
 
 #         self.execute(self.commands)
 
+    def execute(self, commands):
+        press = 0  # flag indicating whether we are putting pressure on paper
+    
+        for (i, comm) in enumerate(commands):
+            if type(comm) == str:
+                if comm == 'UP':
+                    press = 0
+                if comm == 'DOWN':
+                    press = 1
+            else:
+                print(len(commands) - i)
+                if press == 0:
+                    pg.moveTo(comm[0], comm[1], 0)
+                else:
+                    pg.dragTo(comm[0], comm[1], 0, button='left')
+        return
+
     def createPath(self):
         # check for closest point. Go there. Add click down. Change curr. Remove from set and tree. Then, begin
         new_pos = tuple(self.KDTree.search_nn(self.curr_pos)[0].data)
@@ -163,8 +214,9 @@ class AutoDraw(object):
             self.curr_pos = new
             self.KDTree = self.KDTree.remove(list(new))
             self.hashSet.remove(new)
-#             print('Making path...number points left: ', len(self.hashSet))
-        return
+            # print('Just went to point ', self.curr_pos)
+            # print('Making path...number points left: ', len(self.hashSet))
+        return self.commands
 
 #     def cleanCommands(self):
 #         self.commands = self.commands[2:]
@@ -217,21 +269,22 @@ class AutoDraw(object):
             for i, j in zip(labels, fill):
                 label_2_index[i].append(j)
             
-            
+            # count = 0
+            testCommands = []
             for (i, color) in enumerate(colors):
                 
-                print(color[2])
-                print(color[1])
-                print(color[0])
-                print("\n")
+                # print(color[2])
+                # print(color[1])
+                # print(color[0])
+                # print("\n")
                 # Grayscale conversion formula found at 
                 # https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
-                grayscale = 0.299 * color[2] + 0.587 * color[1] + 0.114 * color[0]
+                # grayscale = 0.299 * color[2] + 0.587 * color[1] + 0.114 * color[0]
 #                 print(grayscale)
-#                 print('Please change the pen to thick and color to BGR (not RGB) values: ', color)
-#                 input("Press enter once ready")
-#                 print('')
-
+                # print('Please change the pen to thick and color to BGR (not RGB) values: ', color)
+                # input("Press enter once ready")
+                # print('')
+                
                 points = label_2_index[i]
                 index_tuples = map(tuple, points)
                 self.hashSet = set(index_tuples)
@@ -242,19 +295,26 @@ class AutoDraw(object):
                 self.commands.append(point)
                 self.commands.append("UP")
                 if(color[2] >= color[1] and color[2] >= color[0]):
-                    # print("test")
-                    self.commands.append("BLUE");
+                    print("RED")
+                    # self.commands.append("BLUE")
                 if(color[1] >= color[2] and color[1] >= color[0]):
-                    self.commands.append("GREEN");
+                    print("GREEN")
+                    # self.commands.append("GREEN")
                 if(color[0] >= color[2] and color[0] >= color[1]):
-                    self.commands.append("RED");
-                self.createPath()
+                    print("BLUE")
+                    # self.commands.append("RED")
+                testCommands += self.createPath()
+                # print(len(testCommands))
 
-#                 input('Ready! Press enter to draw: ')
-#                 print('5 seconds until drawing begins...')
-#                 time.sleep(5)
-#                 self.execute(self.commands)
-            return self.commands
+                # input('Ready! Press enter to draw: ')
+                # print('5 seconds until drawing begins...')
+                # time.sleep(5)
+                # try: 
+                # self.execute(self.commands)
+                # except KeyboardInterrupt:
+                #     sys.exit()
+            return testCommands
+            # return self.commands
             if self.outline_again:
                 self.drawOutline()
 
@@ -262,9 +322,13 @@ class AutoDraw(object):
 # In[62]:
 
 
-def main(image_file_path, gcode_file_path, blur=0):
+def main(image_file_path, gcode_file_path, with_color, blur=0):
     drawing = AutoDraw(image_file_path, blur=blur)
-    commands = drawing.drawOutline()
+    if with_color:
+        commands = drawing.draw()
+    else:
+        commands = drawing.drawOutline()
+    # commands += drawing.drawOutline()
     
     cnc = CNC()
     cnc.open(gcode_file_path)
@@ -295,6 +359,10 @@ def main(image_file_path, gcode_file_path, blur=0):
             prevNonUpOrDownCommand = commands[index]
 
     for index in range(len(newCommands)):
+        # if newCommands[index] == "BLUE":
+            # continue
+        if newCommands[index] == None:
+            continue
         if newCommands[index] == 'UP':
             if index + 1 == len(newCommands):
                 cnc.up()
@@ -306,8 +374,17 @@ def main(image_file_path, gcode_file_path, blur=0):
             elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
                 cnc.down()
         else:
-            cnc.g1(x=newCommands[index][1],y=-newCommands[index][0])
+            # print(newCommands[index])
+            cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
  
+    # for index in range(len(commands)):
+    #     if commands[index] == 'UP':
+    #         cnc.up()
+    #     elif commands[index] == 'DOWN':
+    #         cnc.down()
+    #     else:
+    #         cnc.g1(x=int(commands[index][1]),y=-int(commands[index][0]))
+
     cnc.close()
 
 
@@ -318,15 +395,26 @@ if __name__ == "__main__":
 
     process_parser = argparse.ArgumentParser()
 
-    process_parser.add_argument('--nogui', default=False, action="store_true")
-    process_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
+    visualizer_parser.add_argument('image_file_path', type=str, help="Path to image file you would like turned into G-Code")
+    visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
+    visualizer_parser.add_argument("with_color", type=int, help="True for with color, false for without")
+    visualizer_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
 
     args = process_parser.parse_args()
     gui = args.nogui
     gcode_file_path = args.gcode_file_path
+    with_color = args.with_color
+    blur = args.blur
 
     if not os.path.isfile(gcode_file_path):
         print("The G-code instruction file specified does not exist on this path.")
         sys.exit()
 
-    main(gui, gcode_file_path)
+    main(image_file_path, gcode_file_path, with_color, blur)
+
+
+# In[ ]:
+
+
+
+

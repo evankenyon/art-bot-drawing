@@ -5,7 +5,7 @@ import sys,os,re
 import random
 
 # for text rendering
-from HersheyFonts import HersheyFonts
+#from HersheyFonts import HersheyFonts
 
 # for coordinate handling
 import numpy as np

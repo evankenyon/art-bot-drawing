@@ -12,12 +12,12 @@ from torchvision import transforms, utils
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 aug = transforms.Compose(
-            [transforms.ToPILImage(),
+            [transforms.ToPILImage(cd ),
              transforms.RandomHorizontalFlip(),
              ])
 
 width = 128
-convas_area = width * width
+canvas_area = width * width
 
 img_train = []
 img_test = []

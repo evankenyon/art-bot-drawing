@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[4]:
-
-
 # all this code was borrowed from 
 # https://towardsdatascience.com/how-i-used-machine-learning-to-automatically-hand-draw-any-picture-7d024d0de997
 import cv2;
@@ -35,7 +29,7 @@ class AutoDraw(object):
 #         self.dim = pg.size()
 
         # 30 cm x 18 cm
-        self.dim = (250, 175)
+        self.dim = (220, 180)
 
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
@@ -227,17 +221,9 @@ class AutoDraw(object):
             return self.commands
             if self.outline_again:
                 self.drawOutline()
-
-
-# In[5]:
-
-
+                
 drawing = AutoDraw("./landscape.jpeg", blur=2)
 commands = drawing.drawOutline()
-
-
-# In[6]:
-
 
 cnc = CNC()
 cnc.open("./landscape.gcode")
@@ -282,15 +268,23 @@ for index in range(len(newCommands)):
 
 cnc.close()
 
-
-# In[ ]:
-
-
 drawing.draw()
 
 
-# In[ ]:
+if __name__ == "__main__":
+    import argparse
 
+    process_parser = argparse.ArgumentParser()
 
+    process_parser.add_argument('--nogui', default=False, action="store_true")
+    process_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
 
+    args = process_parser.parse_args()
+    gui = args.nogui
+    gcode_file_path = args.gcode_file_path
 
+    if not os.path.isfile(gcode_file_path):
+        print("The G-code instruction file specified does not exist on this path.")
+        sys.exit()
+
+    main(gui, gcode_file_path)

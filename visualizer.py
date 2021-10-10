@@ -21,19 +21,19 @@ class GLines :
         self.update = [0,0,0]
 
     def readline(self, gline):
-        print(gline)
+        verboseprint(gline)
         self.gLine = gline.split()
         self.update = [0,0,0]
 
     def getPos(self, sx =0, sy =0, sz =0):
 
         if len(self.gLine) < 1:
-            print("No Entry")
+            verboseprint("No Entry")
 
         elif self.gLine[0]== 'G0' or self.gLine[0] == 'G1':
 
             self.isG0G1 = True
-            print(' Length of command : %d ' %( len(self.gLine) ))
+            verboseprint(' Length of command : %d ' %( len(self.gLine) ))
 
             dr = [0,0]
             for term in self.gLine:
@@ -74,7 +74,7 @@ class GLines :
     def getCommand(self):
 
         if len(self.gLine) < 1:
-            print("No Entry")
+            verboseprint("No Entry")
 
         elif self.gLine[0][0] != ';':
             self.command = self.gLine[0]
@@ -93,14 +93,14 @@ class GLines :
     
     def getPenDown(self):
         val = self.isPenDown
-        print(val)
+        verboseprint(val)
         return val
 
 
-def main(gui, gcode_file_path):
+def main(gcode_file_path, color):
     gcode_file = open(gcode_file_path)
     gcode_lines = gcode_file.readlines()
-    print("lines: ",len(gcode_lines))
+    verboseprint("lines: ",len(gcode_lines))
     gd = GLines()
 
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -114,7 +114,7 @@ def main(gui, gcode_file_path):
         #print(line, end='')
 
         if len(line) < 1 :
-            print( ' line size = ' + str( len(line)) )
+            verboseprint( ' line size = ' + str( len(line)) )
             continue
 
         # Read line from the file
@@ -122,11 +122,11 @@ def main(gui, gcode_file_path):
         # Get command ( G, M or ... )
         gd.getCommand()
         cmd = gd.command
-        # Get X Y Z E F
+        # Get X Y z
         gd.getPos()
 
         if cmd == 'G28':
-            print(' Home - Initialized ' + cmd +' \n')
+            verboseprint(' Home - Initialized ' + cmd +' \n')
             v.append([0, 0, 0])
 
         # if one of x,y,z moved
@@ -136,7 +136,7 @@ def main(gui, gcode_file_path):
             strokeData.append( [gd.xVal, gd.yVal] )
         elif not gd.getPenDown():
             #if the end of a stroke is reached (ie the pen is raised), end the previous stroke and create a new one
-            print(strokeData)
+            verboseprint(strokeData)
             x = np.asarray([coord[0] for coord in strokeData])
             y = np.asarray([150 + coord[1] for coord in strokeData])
     
@@ -158,15 +158,27 @@ if __name__ == '__main__':
 
     visualizer_parser = argparse.ArgumentParser()
 
-    visualizer_parser.add_argument('--nogui', default=False, action="store_true")
+    visualizer_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in parenthetical comments... if this flag is provided, these colors should be used in visualization")
+    visualizer_parser.add_argument("-v", default=False, action="store_true", help="Print debug statements")
     visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
 
     args = visualizer_parser.parse_args()
-    gui = args.nogui
+    color = args.usecolor
+    verbose = args.v
     gcode_file_path = args.gcode_file_path
+
+    if verbose:
+        def verboseprint(*args):
+        # Print each argument separately so caller doesn't need to
+        # stuff everything to be printed into a single string
+            for arg in args:
+                print(arg)
+            print
+    else:   
+        verboseprint = lambda *a: None      # do-nothing function
 
     if not os.path.isfile(gcode_file_path):
         print("The G-code instruction file specified does not exist on this path.")
         sys.exit()
 
-    main(gui, gcode_file_path)
+    main(gcode_file_path, color)

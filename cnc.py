@@ -112,7 +112,7 @@ class CNC(object):
     def _get_dt(self,distance,maxrate,accel):
         pass #TODO
 
-    # internal state tracking for time/odometer
+    # internal state tracking for time/odometer"
     feedrate = None
     mode_abs = True
     cur_pos = np.array([0,0,0])

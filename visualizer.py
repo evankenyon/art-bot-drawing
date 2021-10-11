@@ -14,18 +14,25 @@ class GLines :
     gLine = []
     isG0G1 = False
     isPenDown = False
+    penColor = ""
     command = ''
     update = [0,0,0] # [x,y,z]
 
     def __init__(self):
         self.update = [0,0,0]
+        self.penColor = "black"
 
     def readline(self, gline):
         verboseprint(gline)
         self.gLine = gline.split()
         self.update = [0,0,0]
 
-    def getPos(self, sx =0, sy =0, sz =0):
+    def getPos(self):
+        selfx = self.xVal
+        selfy = self.yVal
+        return [selfx, selfy]
+
+    def updatePos(self, sx =0, sy =0, sz =0):
 
         if len(self.gLine) < 1:
             verboseprint("No Entry")
@@ -35,10 +42,7 @@ class GLines :
             self.isG0G1 = True
             verboseprint(' Length of command : %d ' %( len(self.gLine) ))
 
-            dr = [0,0]
             for term in self.gLine:
-                if term[0] == ';':
-                    break
                 if term[0] == 'X':
                     iVal = float(term[1:])
                     if iVal != self.xVal:
@@ -58,18 +62,7 @@ class GLines :
                         self.isPenDown = True
                     elif iVal != 0:
                         self.isPenDown = False
-
-
-
-            # Move Type is only defined by  first 3 bits (x,y,z)
-            # if only x,y move , it will be 011 , which is 3
-            # if only z move , it will be 100 , which is 4
-            out = 0
-            for bit in reversed(self.update) :
-                out = ( out << 1 ) | bit
-
-            # 7 is 111 in binary
-            self.moveType = out & 7
+            
     
     def getCommand(self):
 
@@ -77,24 +70,43 @@ class GLines :
             verboseprint("No Entry")
 
         elif self.gLine[0][0] != ';':
+            # print(self.gLine)
             self.command = self.gLine[0]
+            self.updatePos()
 
         elif self.gLine[0][0] == ';':
-            self.command = 'Comment'
+            self.command = 'Color change'
+            verboseprint(self.command)
             self.description = ' '.join(self.gLine)
+            self.updateColor()
+
+        return self.command
 
     def posUpdated(self):
-
         move = False
         if sum(self.update[:2]) > 0 :
             move = True
-
         return move
     
     def getPenDown(self):
         val = self.isPenDown
         verboseprint(val)
         return val
+
+    def getColor(self):
+        color = self.penColor
+        return color
+
+    def updateColor(self):
+        line = self.gLine
+        for i in line:
+            if i.strip() != ";" and i.strip() != " ":
+                color = i
+        if not color:
+            return
+        if self.penColor != color:
+            self.penColor = color
+            print("Changing pen color to %s" % self.penColor)
 
 
 def main(gcode_file_path, color):
@@ -105,8 +117,8 @@ def main(gcode_file_path, color):
 
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    plt.xlim([0, 250])
-    plt.ylim([0, 150])
+    # plt.xlim([0, 250])
+    # plt.ylim([0, 150])
 
     strokeData = []
 
@@ -120,27 +132,31 @@ def main(gcode_file_path, color):
         # Read line from the file
         gd.readline(line)
         # Get command ( G, M or ... )
-        gd.getCommand()
-        cmd = gd.command
-        # Get X Y z
-        gd.getPos()
-
+        cmd = gd.getCommand()
+        
         if cmd == 'G28':
             verboseprint(' Home - Initialized ' + cmd +' \n')
-            v.append([0, 0, 0])
+            strokeData.append([0, 0])
 
         # if one of x,y,z moved
         if  gd.posUpdated() and gd.getPenDown():
-
-            # Record each position and motion type with its color code
-            strokeData.append( [gd.xVal, gd.yVal] )
+            # Record each position
+            strokeData.append(gd.getPos())
         elif not gd.getPenDown():
             #if the end of a stroke is reached (ie the pen is raised), end the previous stroke and create a new one
-            verboseprint(strokeData)
+            #print(strokeData)
             x = np.asarray([coord[0] for coord in strokeData])
             y = np.asarray([150 + coord[1] for coord in strokeData])
-    
-            ax.plot(x, y, linestyle='-')
+            
+            if color:
+                # print(gd.getColor())
+                ax.plot(x, y, linestyle='-', color=gd.getColor())
+
+            else:
+                ax.plot(x, y, linestyle='-')
+                #print("plotting now")
+                verboseprint(x)
+                verboseprint(y)
 
             strokeData = []
 
@@ -148,8 +164,13 @@ def main(gcode_file_path, color):
     #print(v)
     x = np.asarray([coord[0] for coord in strokeData])
     y = np.asarray([150 + coord[1] for coord in strokeData])
+    verboseprint(x)
+    verboseprint(y)
     
-    ax.plot(x, y, linestyle='-')
+    if color:
+        ax.plot(x, y, linestyle='-', color=gd.getColor())
+    else:
+        ax.plot(x, y, linestyle='-')
     plt.show()
 
 if __name__ == '__main__':

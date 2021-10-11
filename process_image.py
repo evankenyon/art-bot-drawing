@@ -270,9 +270,8 @@ class AutoDraw(object):
                 label_2_index[i].append(j)
             
             # count = 0
-            testCommands = []
+            color_commands = {"red":[], "green":[], "blue":[], "black":[]}
             for (i, color) in enumerate(colors):
-                
                 # print(color[2])
                 # print(color[1])
                 # print(color[0])
@@ -284,7 +283,6 @@ class AutoDraw(object):
                 # print('Please change the pen to thick and color to BGR (not RGB) values: ', color)
                 # input("Press enter once ready")
                 # print('')
-                
                 points = label_2_index[i]
                 index_tuples = map(tuple, points)
                 self.hashSet = set(index_tuples)
@@ -295,15 +293,17 @@ class AutoDraw(object):
                 self.commands.append(point)
                 self.commands.append("UP")
                 if(color[2] >= color[1] and color[2] >= color[0]):
-                    print("RED")
+                    line_color = "red"
                     # self.commands.append("BLUE")
                 if(color[1] >= color[2] and color[1] >= color[0]):
-                    print("GREEN")
+                    line_color = "green"
                     # self.commands.append("GREEN")
                 if(color[0] >= color[2] and color[0] >= color[1]):
-                    print("BLUE")
+                    line_color = "blue"
                     # self.commands.append("RED")
-                testCommands += self.createPath()
+                if (max(color) <= 50):
+                    line_color = "black"
+                color_commands[line_color] += self.createPath()
                 # print(len(testCommands))
 
                 # input('Ready! Press enter to draw: ')
@@ -313,7 +313,7 @@ class AutoDraw(object):
                 # self.execute(self.commands)
                 # except KeyboardInterrupt:
                 #     sys.exit()
-            return testCommands
+            return color_commands
             # return self.commands
             if self.outline_again:
                 self.drawOutline()
@@ -321,11 +321,51 @@ class AutoDraw(object):
 
 # In[62]:
 
+    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand):
+        newCommands = [] 
+        for index in range(len(commands)):
+            if(prevNonUpOrDownCommand == commands[index]):
+                continue
+            if commands[index] == 'UP':
+                if index + 1 == len(commands):
+                    newCommands.append(commands[index])
+                elif commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+                    newCommands.append(commands[index])
+    #               cnc.up()
+            elif commands[index] == 'DOWN':
+                if index + 1 == len(commands):
+                    newCommands.append(commands[index])
+                elif commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
+                    newCommands.append(commands[index])
+            else:
+                newCommands.append(commands[index])
+                prevNonUpOrDownCommand = commands[index]
+
+        for index in range(len(newCommands)):
+            # if newCommands[index] == "BLUE":
+                # continue
+            if newCommands[index] == None:
+                continue
+            if newCommands[index] == 'UP':
+                if index + 1 == len(newCommands):
+                    cnc.up()
+                elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
+                    cnc.up()
+            elif newCommands[index] == 'DOWN':
+                if index + 1 == len(newCommands):
+                    cnc.down()
+                elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
+                    cnc.down()
+            else:
+                # print(newCommands[index])
+                cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
+        return newCommands
+
 
 def main(image_file_path, gcode_file_path, with_color, blur=0):
     drawing = AutoDraw(image_file_path, blur=blur)
     if with_color:
-        commands = drawing.draw()
+        color_commands = drawing.draw()
     else:
         commands = drawing.drawOutline()
     # commands += drawing.drawOutline()
@@ -340,53 +380,16 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
     # cnc.g1(z=0)
     prevNonUpOrDownCommand = (0, 0)
     newCommands = [] 
-    for index in range(len(commands)):
-        if(prevNonUpOrDownCommand == commands[index]):
-            continue
-        if commands[index] == 'UP':
-            if index + 1 == len(commands):
-                newCommands.append(commands[index])
-            elif commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
-                newCommands.append(commands[index])
-    #             cnc.up()
-        elif commands[index] == 'DOWN':
-            if index + 1 == len(commands):
-                newCommands.append(commands[index])
-            elif commands[index + 1] != 'UP' and commands[index + 1] != 'DOWN':
-                newCommands.append(commands[index])
-        else:
-            newCommands.append(commands[index])
-            prevNonUpOrDownCommand = commands[index]
-
-    for index in range(len(newCommands)):
-        # if newCommands[index] == "BLUE":
-            # continue
-        if newCommands[index] == None:
-            continue
-        if newCommands[index] == 'UP':
-            if index + 1 == len(newCommands):
-                cnc.up()
-            elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-                cnc.up()
-        elif newCommands[index] == 'DOWN':
-            if index + 1 == len(newCommands):
-                cnc.down()
-            elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-                cnc.down()
-        else:
-            # print(newCommands[index])
-            cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
- 
-    # for index in range(len(commands)):
-    #     if commands[index] == 'UP':
-    #         cnc.up()
-    #     elif commands[index] == 'DOWN':
-    #         cnc.down()
-    #     else:
-    #         cnc.g1(x=int(commands[index][1]),y=-int(commands[index][0]))
-
+    if not with_color:
+        newCommands = drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand)
+    else:
+        for color in color_commands:
+            if color_commands[color]:
+                cnc.comment(color)
+                commands = color_commands[color]
+                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand))
+    
     cnc.close()
-
 
 # In[ ]:
 
@@ -395,26 +398,20 @@ if __name__ == "__main__":
 
     process_parser = argparse.ArgumentParser()
 
-    visualizer_parser.add_argument('image_file_path', type=str, help="Path to image file you would like turned into G-Code")
-    visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
-    visualizer_parser.add_argument("with_color", type=int, help="True for with color, false for without")
-    visualizer_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
+    process_parser.add_argument('image_file_path', type=str, help="Path to image file you would like turned into G-Code")
+    process_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
+    process_parser.add_argument("with_color", type=int, help="True for with color, false for without")
+    process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
 
     args = process_parser.parse_args()
-    gui = args.nogui
+    image_file_path = args.image_file_path
     gcode_file_path = args.gcode_file_path
     with_color = args.with_color
     blur = args.blur
 
-    if not os.path.isfile(gcode_file_path):
-        print("The G-code instruction file specified does not exist on this path.")
+    if not os.path.isfile(image_file_path):
+        print("The reference image file specified does not exist on this path.")
         sys.exit()
 
     main(image_file_path, gcode_file_path, with_color, blur)
-
-
-# In[ ]:
-
-
-
 

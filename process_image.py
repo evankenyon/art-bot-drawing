@@ -1,15 +1,18 @@
 # Instructions on how to use:
 # 1. Go into directory that contains this folder (i.e. Robot-Draw)
-# 2. Run the command "python process_image.py *image file path* *gcode file path* *blur*"
+# 2. Run the command "python process_image.py *image file path* *gcode file path* *blur* *usecolor*"
 # Blur is an optional argument (it is 0 by default, and can be between 0 and 2)
 # The image file path needs to already exist, i.e. you should have an image
 # ready for processing. However, the gcode file path does not have to exist.
 # If it already does, then it will be overwritten. If it doesn't, it will be
-# created. 
-# Example usage: python process_image.py ./aang.png ./aang.gcode
+# created. The usercolor argument is just a flag, "--usecolor" that you include if you want to use
+# color, and don't include if you  don't (i.e. you just want an outline).
+# Example usage: python process_image.py ./aang.png ./aang.gcode 1 --usecolor
 # The example usage would take in aang.png (located in the Robot-Draw folder
 # as denoted by the "./") and output the gcode into the aang.gcode file (
-# also in the Robot-Draw folder).
+# also in the Robot-Draw folder). This would use blur 1 (if you woanted blur to be 0,
+# then you would leave this argumentout completely) and make it with color instead of
+# an outline (if you wanted it to just be the outline, you would leave out --usecolor entirely).
 
 #!/usr/bin/env python
 # coding: utf-8
@@ -294,12 +297,15 @@ class AutoDraw(object):
                 self.commands.append("UP")
                 if(color[2] >= color[1] and color[2] >= color[0]):
                     line_color = "red"
+                    print("red")
                     # self.commands.append("BLUE")
                 if(color[1] >= color[2] and color[1] >= color[0]):
                     line_color = "green"
+                    print("green")
                     # self.commands.append("GREEN")
                 if(color[0] >= color[2] and color[0] >= color[1]):
                     line_color = "blue"
+                    print("blue")
                     # self.commands.append("RED")
                 if (max(color) <= 50):
                     line_color = "black"
@@ -400,13 +406,14 @@ if __name__ == "__main__":
 
     process_parser.add_argument('image_file_path', type=str, help="Path to image file you would like turned into G-Code")
     process_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
-    process_parser.add_argument("with_color", type=int, help="True for with color, false for without")
+    # process_parser.add_argument("with_color", type=int, help="True for with color, false for without")
     process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
+    process_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in parenthetical comments... if this flag is provided, these colors should be used in visualization")
 
     args = process_parser.parse_args()
     image_file_path = args.image_file_path
     gcode_file_path = args.gcode_file_path
-    with_color = args.with_color
+    with_color = args.usecolor
     blur = args.blur
 
     if not os.path.isfile(image_file_path):

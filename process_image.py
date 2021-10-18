@@ -51,7 +51,8 @@ class AutoDraw(object):
         # 30 cm x 18 cm
 
         xRatio = 18/30
-        yDim = 165
+        yDim = 2000
+        # yDim = 165
         xDim = yDim * xRatio
         self.dim = (yDim, xDim)
         # Scale to draw inside part of screen
@@ -341,6 +342,8 @@ class AutoDraw(object):
                 newCommands.append(commands[index])
                 prevNonUpOrDownCommand = commands[index]
 
+        ratio = 165/2000
+        # ratio = 1
         for index in range(len(newCommands)):
             # if newCommands[index] == "BLUE":
                 # continue
@@ -357,8 +360,17 @@ class AutoDraw(object):
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
                     cnc.down()
             else:
-                # print(newCommands[index])
-                cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
+                if index + 1 == len(newCommands):
+                    cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
+                elif newCommands[index + 1][0] != newCommands[index][0] and newCommands[index + 1][1] != newCommands[index][1]:
+                    cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
+                else:
+                    if(newCommands[index + 1][0] == newCommands[index][0] and ratio*abs(newCommands[index + 1][1] - newCommands[index][1]) >= 1):
+                        print(newCommands[index + 1][0])
+                        cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
+                    elif(newCommands[index + 1][1] == newCommands[index][1] and ratio*abs(newCommands[index + 1][0] - newCommands[index][0]) >= 1):
+                        print("test2")
+                        cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
         return newCommands
 
 

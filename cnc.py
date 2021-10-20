@@ -86,8 +86,8 @@ class CNC(object):
     fp_gcode = None
     enable_echo = True
     
-    pen_up_height = 1
-    pen_down_height = 0
+    pen_up_height = -15
+    pen_down_height = -25
     
     def open(self,filename):
         self.fp_gcode = open(filename,"w")
@@ -146,6 +146,10 @@ class CNC(object):
         self.cmd("G1",x=x,y=y,z=z,f=f) # slow travel
     def g28(self,x=None,y=None,z=None): 
         self.cmd("G28",x=x,y=y,z=z) # home via the coords given
+    def g54(self):
+        self.cmd("G54")
+    def g55(self):
+        self.cmd("G55")
     def g90(self): 
         mode_abs = True
         self.cmd("G90") # abs mode

@@ -364,13 +364,13 @@ class AutoDraw(object):
                     cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
                 elif newCommands[index + 1][0] != newCommands[index][0] and newCommands[index + 1][1] != newCommands[index][1]:
                     cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
-                else:
-                    if(newCommands[index + 1][0] == newCommands[index][0] and ratio*abs(newCommands[index + 1][1] - newCommands[index][1]) >= 1):
-                        print(newCommands[index + 1][0])
-                        cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
-                    elif(newCommands[index + 1][1] == newCommands[index][1] and ratio*abs(newCommands[index + 1][0] - newCommands[index][0]) >= 1):
-                        print("test2")
-                        cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
+                # else:
+                #     if(newCommands[index + 1][0] == newCommands[index][0] and ratio*abs(newCommands[index + 1][1] - newCommands[index][1]) >= 1):
+                #         print(newCommands[index + 1][0])
+                #         cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
+                #     elif(newCommands[index + 1][1] == newCommands[index][1] and ratio*abs(newCommands[index + 1][0] - newCommands[index][0]) >= 1):
+                #         print("test2")
+                #         cnc.g1(x=ratio*float(newCommands[index][1]),y=-ratio*float(newCommands[index][0]))
         return newCommands
 
 

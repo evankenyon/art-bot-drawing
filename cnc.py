@@ -149,6 +149,12 @@ class CNC(object):
         self.cmd("G1",x=x,y=y,z=z,f=f) # slow travel
     def g28(self,x=None,y=None,z=None): 
         self.cmd("G28",x=x,y=y,z=z) # home via the coords given
+    def g53(self):
+        self.cmd("G53")
+    def g54(self):
+        self.cmd("G54")
+    def g55(self):
+        self.cmd("G55")
     def g90(self): 
         mode_abs = True
         self.cmd("G90") # abs mode

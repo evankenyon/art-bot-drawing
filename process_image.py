@@ -430,7 +430,7 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
     prevNonUpOrDownCommand = (0, 0)
     newCommands = [] 
     if not with_color:
-        newCommands = drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand)
+        newCommands = drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, "NA")
     else:
         for color in color_commands:
             if color_commands[color]:

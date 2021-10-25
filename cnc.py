@@ -155,6 +155,8 @@ class CNC(object):
         self.cmd("G54")
     def g55(self):
         self.cmd("G55")
+    def g56(self):
+        self.cmd("G56")
     def g90(self): 
         mode_abs = True
         self.cmd("G90") # abs mode

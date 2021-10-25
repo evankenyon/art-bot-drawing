@@ -21,13 +21,14 @@
 
 # all this code was borrowed from 
 # https://towardsdatascience.com/how-i-used-machine-learning-to-automatically-hand-draw-any-picture-7d024d0de997
+from typing import OrderedDict
 import cv2;
 from matplotlib import pyplot as plt
 import numpy as np
 import pyautogui as pg
 import kdtree
 import operator
-from cnc import CNC
+from Paint_CNC import Paint_CNC
 from sklearn.cluster import KMeans
 from collections import defaultdict
 import os, sys, time
@@ -42,6 +43,15 @@ class AutoDraw(object):
         self.with_color = True
         self.num_colors = 10
         self.outline_again = False
+        self.possible_colors = OrderedDict()
+        self.possible_colors['brown'] = [102, 82, 86]
+        self.possible_colors['blue'] = [78, 151, 228]
+        self.possible_colors['yellow'] = [249, 216, 36]
+        self.possible_colors['orange'] = [238, 75, 29]
+        self.possible_colors['green'] = [56, 131, 57]
+        self.possible_colors['red'] = [171, 24, 26]
+        self.possible_colors['purple'] = [54, 35, 88]
+        self.possible_colors['black'] = [31, 25, 33]
 
         # Load Image. Switch axes to match computer screen
         self.img = cv2.imread(name)
@@ -54,7 +64,7 @@ class AutoDraw(object):
         # 30 cm x 18 cm
 
         xRatio = 18/30
-        yDim = 165
+        yDim = 150
         xDim = yDim * xRatio
         self.dim = (yDim, xDim)
         # Scale to draw inside part of screen
@@ -256,29 +266,69 @@ class AutoDraw(object):
         norm = np.sqrt(norm)
         return point[0] / norm, point[1] / norm
     
+    def get_line_color(self, r, g, b):
+        
+        min_distance = 9999999999
+        min_color = ""
+        for color, rgb in self.possible_colors.items():
+            possible_min_distance = abs(r - rgb[0]) + abs(g - rgb[1]) + abs(b - rgb[2])
+            if possible_min_distance < min_distance:
+                min_distance = possible_min_distance
+                min_color = color
+        return min_color
+
+
     def draw(self):
         if self.with_color:
+            # Original:
+            # color = self.rescale(self.img, self.pseudoDim)
+            # collapsed = np.sum(color, axis=2)/3
+            # fill = np.argwhere(collapsed < 230)  # color 2-d indices
+            # fill = np.swapaxes(fill, 0, 1)  # swap to index into color
+            # RGB = color[fill[0], fill[1], :]
+            # k_means = KMeans(n_clusters=self.num_colors).fit(RGB)
+            # colors = k_means.cluster_centers_
+            # labels = k_means.labels_
+            # fill = np.swapaxes(fill, 0, 1).tolist()  # swap back to make dictionary
+            # label_2_index = defaultdict(list)
+
+            # for i, j in zip(labels, fill):
+            #     label_2_index[i].append(j)
+            # print(label_2_index)
+
+
             color = self.rescale(self.img, self.pseudoDim)
             collapsed = np.sum(color, axis=2)/3
             fill = np.argwhere(collapsed < 230)  # color 2-d indices
             fill = np.swapaxes(fill, 0, 1)  # swap to index into color
             RGB = color[fill[0], fill[1], :]
-            k_means = KMeans(n_clusters=self.num_colors).fit(RGB)
-            colors = k_means.cluster_centers_
-            labels = k_means.labels_
-            fill = np.swapaxes(fill, 0, 1).tolist()  # swap back to make dictionary
-            label_2_index = defaultdict(list)
+            colors = self.possible_colors.values()
 
+            color_commands = OrderedDict()
+            color_commands['brown'] = []
+            color_commands['blue'] = []
+            color_commands['yellow'] = []
+            color_commands['orange'] = []
+            color_commands['green'] = []
+            color_commands['red'] = []
+            color_commands['purple'] = []
+            color_commands['black'] = []
+            labels = []
+
+            for (i, color) in enumerate(RGB):
+                line_color = self.get_line_color(color[2], color[1], color[0])
+                labels.append(list(color_commands.keys()).index(line_color))
+
+            fill = np.swapaxes(fill, 0, 1).tolist()  # swap back to make dictionary
+            
+            label_2_index = defaultdict(list)
             for i, j in zip(labels, fill):
                 label_2_index[i].append(j)
             
-            # count = 0
-            color_commands = {"red":[], "green":[], "blue":[], "black":[]}
             for (i, color) in enumerate(colors):
-                # print(color[2])
-                # print(color[1])
-                # print(color[0])
-                # print("\n")
+                if label_2_index[i] == []:
+                    continue
+
                 # Grayscale conversion formula found at 
                 # https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
                 # grayscale = 0.299 * color[2] + 0.587 * color[1] + 0.114 * color[0]
@@ -293,24 +343,27 @@ class AutoDraw(object):
                 self.commands = []
                 self.curr_pos = (0, 0)
                 point = self.translate(self.curr_pos)
-                self.commands.append(point)
                 self.commands.append("UP")
-                if(color[2] >= color[1] and color[2] >= color[0]):
-                    line_color = "red"
-                    print("red")
-                    # self.commands.append("BLUE")
-                if(color[1] >= color[2] and color[1] >= color[0]):
-                    line_color = "green"
-                    print("green")
-                    # self.commands.append("GREEN")
-                if(color[0] >= color[2] and color[0] >= color[1]):
-                    line_color = "blue"
-                    print("blue")
-                    # self.commands.append("RED")
-                if (max(color) <= 50):
-                    line_color = "black"
+                self.commands.append(point)
+
+                line_color = self.get_line_color(color[0], color[1], color[2])
+                self.commands.append(line_color)
+                # if(color[2] >= color[1] and color[2] >= color[0]):
+                #     line_color = "red"
+                #     print("red")
+                #     # self.commands.append("BLUE")
+                # if(color[1] >= color[2] and color[1] >= color[0]):
+                #     line_color = "green"
+                #     print("green")
+                #     # self.commands.append("GREEN")
+                # if(color[0] >= color[2] and color[0] >= color[1]):
+                #     line_color = "blue"
+                #     print("blue")
+                #     # self.commands.append("RED")
+                # if (max(color) <= 50):
+                #     line_color = "black"
                 color_commands[line_color] += self.createPath()
-                # print(len(testCommands))
+                self.commands.append("UP")
 
                 # input('Ready! Press enter to draw: ')
                 # print('5 seconds until drawing begins...')
@@ -319,6 +372,7 @@ class AutoDraw(object):
                 # self.execute(self.commands)
                 # except KeyboardInterrupt:
                 #     sys.exit()
+            
             return color_commands
             # return self.commands
             if self.outline_again:
@@ -327,7 +381,7 @@ class AutoDraw(object):
 
 # In[62]:
 
-    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand):
+    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color):
         newCommands = [] 
         for index in range(len(commands)):
             if(prevNonUpOrDownCommand == commands[index]):
@@ -348,22 +402,27 @@ class AutoDraw(object):
                 prevNonUpOrDownCommand = commands[index]
 
         for index in range(len(newCommands)):
-            # if newCommands[index] == "BLUE":
-                # continue
-            if newCommands[index] == None:
+            if newCommands[index] == color:
+                cnc.set_paint_color(color)
+            elif newCommands[index] == None:
                 continue
-            if newCommands[index] == 'UP':
+            elif newCommands[index] == 'UP' or newCommands[index - 1] == color:
                 if index + 1 == len(newCommands):
                     cnc.up()
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
                     cnc.up()
             elif newCommands[index] == 'DOWN':
-                if index + 1 == len(newCommands):
+                if newCommands[index - 2] == color:
+                    cnc.g1(z=5)
+                elif index + 1 == len(newCommands):
                     cnc.down()
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
                     cnc.down()
             else:
                 # print(newCommands[index])
+                # print(newCommands[index])
+                if newCommands[index - 4] == color:
+                    cnc.down()
                 cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
         return newCommands
 
@@ -376,7 +435,7 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
         commands = drawing.drawOutline()
     # commands += drawing.drawOutline()
     
-    cnc = CNC()
+    cnc = Paint_CNC()
     cnc.open(gcode_file_path)
 
     cnc.g90()
@@ -393,7 +452,7 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
             if color_commands[color]:
                 cnc.comment(color)
                 commands = color_commands[color]
-                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand))
+                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color))
     
     cnc.close()
 

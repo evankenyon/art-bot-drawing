@@ -98,6 +98,7 @@ class GLines :
         return color
 
     def updateColor(self):
+        # possible_colors = {"brown": [102, 82, 86], "lightblue": [78, 151, 228], "yellow": [249, 216, 36], "orange": [238, 75, 29], "green": [56, 131, 57], "red": [171, 24, 26], "purple": [54, 35, 88], "black": [31, 25, 33]}
         line = self.gLine
         for i in line:
             if i.strip() != ";" and i.strip() != " ":

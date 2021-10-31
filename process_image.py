@@ -13,6 +13,7 @@ import pyautogui as pg
 import kdtree
 import operator
 from Paint_CNC import Paint_CNC
+from line import Line
 from sklearn.cluster import KMeans
 from collections import defaultdict
 import os, sys, time
@@ -330,7 +331,7 @@ class AutoDraw(object):
                 self.commands.append("UP")
                 self.commands.append(point)
 
-                line_color = self.get_line_color(color[0], color[1], color[2])
+                line_color = self.get_line_color(color[2], color[1], color[0])
                 self.commands.append(line_color)
                 # if(color[2] >= color[1] and color[2] >= color[0]):
                 #     line_color = "red"
@@ -385,30 +386,84 @@ class AutoDraw(object):
                 newCommands.append(commands[index])
                 prevNonUpOrDownCommand = commands[index]
 
+        preConsolidationCommands = []
+        
         for index in range(len(newCommands)):
             if newCommands[index] == color:
-                cnc.set_paint_color(color)
+                preConsolidationCommands.append(newCommands[index])
+                # cnc.set_paint_color(color)
             elif newCommands[index] == None:
                 continue
             elif newCommands[index] == 'UP' or newCommands[index - 1] == color:
                 if index + 1 == len(newCommands):
-                    cnc.up()
+                    preConsolidationCommands.append('UP')
+                    # cnc.up()
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-                    cnc.up()
+                    preConsolidationCommands.append('UP')
+                    # cnc.up()
             elif newCommands[index] == 'DOWN':
                 if newCommands[index - 2] == color:
-                    cnc.g1(z=5)
+                    preConsolidationCommands.append('UP')
+                    # cnc.g1(z=5)
                 elif index + 1 == len(newCommands):
-                    cnc.down()
+                    preConsolidationCommands.append('DOWN')
+                    # cnc.down()
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-                    cnc.down()
+                    preConsolidationCommands.append('DOWN')
+                    # cnc.down()
             else:
                 # print(newCommands[index])
                 # print(newCommands[index])
                 if newCommands[index - 4] == color:
-                    cnc.down()
-                cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
-        return newCommands
+                    preConsolidationCommands.append('DOWN')
+                    # cnc.down()
+                properXY = (float(newCommands[index][1]), -float(newCommands[index][0]))
+                preConsolidationCommands.append(properXY)
+                # cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
+        
+
+        lines = []
+        for index in range(len(preConsolidationCommands)):
+            if(index + 1 == len(preConsolidationCommands)):
+                break
+            if preConsolidationCommands[index] == color or preConsolidationCommands[index] == 'DOWN' or preConsolidationCommands[index] == 'UP':
+                lines.append(preConsolidationCommands[index])
+            elif preConsolidationCommands[index + 1] == color or preConsolidationCommands[index + 1] == 'DOWN' or preConsolidationCommands[index + 1] == 'UP':
+                continue
+            else:
+                potentialLine = Line(preConsolidationCommands[index][0], preConsolidationCommands[index][1], preConsolidationCommands[index+1][0], preConsolidationCommands[index+1][1])
+                shouldDraw = True
+                for line in lines:
+                    if type(line) is Line:
+                        if not potentialLine.shouldDraw(line):
+                            shouldDraw = False
+
+                if shouldDraw:
+                    lines.append(potentialLine)
+        
+        finalCommands = []
+
+        for index in range(len(lines)):
+            
+            if type(lines[index]) is Line:
+                cnc.g1(x=lines[index].getBeginX(),y=lines[index].getBeginY())
+                if type(lines[index-1]) is not Line:
+                    finalCommands.append('DOWN')
+                    # cnc.down()
+                if len(lines) == index + 1 or type(lines[index + 1]) is not Line:
+                    cnc.g1(x=lines[index].getEndX(),y=lines[index].getEndY())
+            elif lines[index] == 'UP':
+                # cnc.up()
+                finalCommands.append('UP')
+            elif lines[index] == 'DOWN':
+                if len(lines) == index + 1 or type(lines[index + 1]) is not Line:
+                    # cnc.down()
+                    finalCommands.append('UP')
+            elif lines[index] == color:
+                finalCommands.append(color)
+                # cnc.set_paint_color(color)
+
+        return preConsolidationCommands
 
 
 def main(image_file_path, gcode_file_path, with_color, blur=0):

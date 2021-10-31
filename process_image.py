@@ -448,20 +448,20 @@ class AutoDraw(object):
             if type(lines[index]) is Line:
                 cnc.g1(x=lines[index].getBeginX(),y=lines[index].getBeginY())
                 if type(lines[index-1]) is not Line:
-                    finalCommands.append('DOWN')
-                    # cnc.down()
+                    # finalCommands.append('DOWN')
+                    cnc.down()
                 if len(lines) == index + 1 or type(lines[index + 1]) is not Line:
                     cnc.g1(x=lines[index].getEndX(),y=lines[index].getEndY())
             elif lines[index] == 'UP':
-                # cnc.up()
-                finalCommands.append('UP')
+                cnc.up()
+                # finalCommands.append('UP')
             elif lines[index] == 'DOWN':
                 if len(lines) == index + 1 or type(lines[index + 1]) is not Line:
-                    # cnc.down()
-                    finalCommands.append('UP')
+                    cnc.down()
+                    # finalCommands.append('UP')
             elif lines[index] == color:
-                finalCommands.append(color)
-                # cnc.set_paint_color(color)
+                # finalCommands.append(color)
+                cnc.set_paint_color(color)
 
         return preConsolidationCommands
 

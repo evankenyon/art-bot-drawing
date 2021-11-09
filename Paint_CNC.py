@@ -15,7 +15,7 @@ class Paint_CNC(CNC):
     THRESHOLD = 50
     pen_paint_height = -21.5
     pen_water_height = -20
-    current_color = 0
+    current_color = "black"
     # Default coordinate system is defined here as G54
 
     def g0(self, x=None, y=None, z=None):
@@ -58,7 +58,7 @@ class Paint_CNC(CNC):
         color_num = color_to_num[color]
         # get some water, clean the brush
         self.clean()
-        self.current_color = color_num
+        self.current_color = color
         # find coordinate based on color number
         relative_y_coord = color_num*24.5
         # set to paint coordinate system

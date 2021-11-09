@@ -5,7 +5,7 @@ import sys,os,re
 import random
 
 # for text rendering
-from HersheyFonts import HersheyFonts
+#from HersheyFonts import HersheyFonts
 
 # for coordinate handling
 import numpy as np
@@ -89,7 +89,16 @@ class CNC(object):
 
     pen_up_height = -15
     pen_down_height = -25
+
     
+    fp_gcode = None
+    pen_up_height = 1
+    pen_down_height = 0
+    enable_echo = False
+    if __name__ == "main": 
+        enable_echo = True
+        
+        
     def open(self,filename):
         self.fp_gcode = open(filename,"w")
         
@@ -110,7 +119,7 @@ class CNC(object):
     def _get_dt(self,distance,maxrate,accel):
         pass #TODO
 
-    # internal state tracking for time/odometer
+    # internal state tracking for time/odometer"
     feedrate = None
     mode_abs = True
     cur_pos = np.array([0,0,0])
@@ -353,7 +362,8 @@ if 1:
         ry = -ry # upper left is origin
         #sys.stderr.write(str((px,py))+"  "+str((rx,ry))+"\n")
         cnc.g1(rx,ry)
-    sys.stderr.write("delta: "+str((rdx,rdy))+"\n")
+    if __name__ == "main": 
+        sys.stderr.write("delta: "+str((rdx,rdy))+"\n")
     #cnc.render_text_file(text_fp,10,"cursive")
     #cnc.render_image_raster_free(text_filename, 150, 0, 1, pixel_order=pixel_order_diag2, mm_per_row=0.5, save_working_image_filename="yeah.png")
 
@@ -361,3 +371,5 @@ cnc.g0(z=5)
 cnc.g0(0,0)
 
 # cnc.print_stderr_report()
+if __name__ == "main": 
+    cnc.print_stderr_report()

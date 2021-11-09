@@ -50,9 +50,12 @@ class Paint_CNC(CNC):
         self.__move_brush_around_water()
         self.up()
         self.comment("Cleaning done")
-        # self.__return_to_last_painting_position()
-    def set_paint_color(self, color_num):
+        # self.__return_to_last_painting_position()        
+
+    def set_paint_color(self, color):
         self.comment("Setting color to: {}".format(color_num))
+        color_to_num = {"black": 0, "purple": 1, "red": 2, "yellow": 3, "orange": 4, "green": 5, "blue": 6, "brown": 7}
+        color_num = color_to_num[color]
         # get some water, clean the brush
         self.clean()
         self.current_color = color_num
@@ -61,22 +64,18 @@ class Paint_CNC(CNC):
         # set to paint coordinate system
         self.g56()
         # zero
-        self.g0(x=0,y=0,z=0)
+        self.g0(z=8)
+        self.g0(x=0, y=0)
+        self.g0(z=0)
+        # self.g0(x=0,y=0,z=0)
         self.g91()
         self.g0(y=-relative_y_coord)
         # touch paint
         self.g0(z=self.pen_paint_height)
         self.__move_brush_around_paint()
         self.__return_to_last_painting_position()
-        self.comment("Done setting color to: {}".format(color_num))
-        #     0:, # black
-        #     1:, # purple
-        #     2:, # red
-        #     3:, # yellow
-        #     4:, # orange
-        #     5:, # green
-        #     6:, # blue
-        #     7:  # brown
+        self.comment("Done setting color to: {}".format(color))
+
     # -- Private methods --
     def __move_brush_around_paint(self):
         self.g0(x=8)

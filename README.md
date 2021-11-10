@@ -28,6 +28,13 @@ Dips the bursh in water
 Moves back and forth along the ridge 
 Rezeros the brush
 
+### refill
+Designed to be called whenever the brush has traveled past defined threshold (in mm) [see THRESHOLD in Paint_CNC.py]. 
+
+Method:
+Calls clean method
+Calls set_paint_color method with current color
+
 ### set_paint_color
 To pick up the paint color you would like to use
 

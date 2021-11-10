@@ -83,6 +83,13 @@ def pixel_order_compose(*funcs):
         
 
 class CNC(object):
+    fp_gcode = None
+    enable_echo = True
+    pen_down = False
+
+    pen_up_height = -15
+    pen_down_height = -25
+
     
     fp_gcode = None
     pen_up_height = 1
@@ -149,8 +156,6 @@ class CNC(object):
         self.cmd("G1",x=x,y=y,z=z,f=f) # slow travel
     def g28(self,x=None,y=None,z=None): 
         self.cmd("G28",x=x,y=y,z=z) # home via the coords given
-    def g53(self):
-        self.cmd("G53")
     def g54(self):
         self.cmd("G54")
     def g55(self):
@@ -216,7 +221,7 @@ class CNC(object):
 
         self.comment("Image: %s" % filename)
         self.g0(z=up_z)
-        pen_down = False
+        self.pen_down = False
         for py in range(p_sy):
             self.comment("[%s] Row %d of %d" % (filename,py,p_sy))
             ry = -py*mm_per_row
@@ -230,18 +235,18 @@ class CNC(object):
                 rz = interp(value,0,255,black_z,white_z)
                 
                 if value<255:
-                    if not pen_down:
+                    if not self.pen_down:
                         self.g0(x=rx,y=ry,z=up_z)
                     self.g1(x=rx,y=ry,z=rz)
-                    pen_down = True
+                    self.pen_down = True
                 else:
-                    if pen_down:
+                    if self.pen_down:
                         self.g0(z=up_z)
-                        pen_down = False
+                        self.pen_down = False
                 
-            if pen_down:
+            if self.pen_down:
                 self.g0(z=up_z)
-                pen_down = False
+                self.pen_down = False
 
     def render_image_raster_free(self, filename, height_mm, black_z, white_z, pixel_order, up_z=None, mm_per_row=0.5, save_working_image_filename=None):
         if up_z is None:
@@ -260,7 +265,7 @@ class CNC(object):
 
         self.comment("Image: %s" % filename)
         self.g0(z=up_z)
-        pen_down = False
+        self.pen_down = False
         old_px=-10
         old_py=-10
         for px,py in pixel_order(p_sx,p_sy):
@@ -271,26 +276,28 @@ class CNC(object):
             rz = interp(value,0,255,black_z,white_z)
             
             if value<255:
-                if not pen_down:
+                if not self.pen_down:
                     self.g0(x=rx,y=ry,z=up_z)
                 self.g1(x=rx,y=ry,z=rz)
-                pen_down = True
+                self.pen_down = True
             else:
-                if pen_down:
+                if self.pen_down:
                     self.g0(z=up_z)
-                    pen_down = False
+                    self.pen_down = False
             
             # if pen is down and we need to seek elsewhere, pull pen up (e.g. at end of line in a simple raster)
-            if pen_down and (abs(old_px-px)>1 or abs(old_py-py)>1):
+            if self.pen_down and (abs(old_px-px)>1 or abs(old_py-py)>1):
                 self.g0(z=up_z)
-                pen_down = False
+                self.pen_down = False
                 
             old_px = px
             old_py = py
 
     def up(self): 
-        self.g0(z=self.pen_up_height)
+        self.g1(z=self.pen_up_height)
+        self.pen_down = False
     def down(self): 
+        self.pen_down = True
         self.g1(z=self.pen_down_height)
         
     def render_test_grid(self, size_x, size_y, z, num_lines=5, up_z=5):
@@ -363,5 +370,6 @@ if 1:
 cnc.g0(z=5)
 cnc.g0(0,0)
 
+# cnc.print_stderr_report()
 if __name__ == "main": 
     cnc.print_stderr_report()

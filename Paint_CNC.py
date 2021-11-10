@@ -53,9 +53,9 @@ class Paint_CNC(CNC):
         # self.__return_to_last_painting_position()        
 
     def set_paint_color(self, color):
-        self.comment("Setting color to: {}".format(color_num))
         color_to_num = {"black": 0, "purple": 1, "red": 2, "yellow": 3, "orange": 4, "green": 5, "blue": 6, "brown": 7}
         color_num = color_to_num[color]
+        self.comment("Setting color to: {}".format(color_num))
         # get some water, clean the brush
         self.clean()
         self.current_color = color

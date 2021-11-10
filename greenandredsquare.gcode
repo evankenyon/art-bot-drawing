@@ -1,0 +1,1308 @@
+G90 
+G0 Z5
+F3000
+G0 Z5
+; orange
+G1 Z10
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X0 Y0
+G1 Z0
+; Done setting color to: orange
+G1 Z10
+G1 Z0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X0 Y0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X63.0 Y-68.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X63.0 Y-68.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X63.0 Y-17.0
+G1 Z10
+G0 X59.2 Y-17.0
+G1 Z0
+G0 X59.1 Y-17.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X59.1 Y-17.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X18.0 Y-17.0
+G1 Z10
+G0 X18.0 Y-20.8
+G1 Z0
+G0 X18.0 Y-20.900000000000002
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X18.0 Y-20.900000000000002
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X18.0 Y-67.0
+G1 Z10
+G0 X21.8 Y-67.0
+G1 Z0
+G0 X21.900000000000002 Y-67.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X21.900000000000002 Y-67.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X59.1 Y-67.0
+G1 Z10
+G0 X59.3 Y-21.0
+G1 Z0
+G0 X59.199999999999996 Y-20.999999999999996
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X59.199999999999996 Y-20.999999999999996
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X21.8 Y-21.0
+G1 Z10
+G0 X59.00000000000001 Y-63.2
+G1 Z0
+G0 X59.0 Y-63.1
+G0 X59.0 Y-24.9
+G1 Z10
+G0 X21.8 Y-63.0
+G1 Z0
+G0 X21.900000000000002 Y-63.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X21.900000000000002 Y-63.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X55.1 Y-63.0
+G1 Z10
+G0 X22.0 Y-24.799999999999997
+G1 Z0
+G0 X22.0 Y-24.900000000000002
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X22.0 Y-24.900000000000002
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X22.0 Y-59.1
+G1 Z10
+G0 X55.2 Y-25.0
+G1 Z0
+G0 X55.1 Y-25.0
+G0 X25.9 Y-25.0
+G1 Z10
+G0 X25.9 Y-59.0
+G1 Z0
+G0 X26.0 Y-59.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X26.0 Y-59.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X55.0 Y-59.0
+G1 Z10
+G0 X55.0 Y-55.2
+G1 Z0
+G0 X55.0 Y-55.099999999999994
+G0 X55.0 Y-28.8
+G1 Z10
+G0 X26.0 Y-28.9
+G1 Z0
+G0 X26.0 Y-29.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X26.0 Y-29.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X26.0 Y-55.1
+G1 Z10
+G0 X51.300000000000004 Y-29.0
+G1 Z0
+G0 X51.199999999999996 Y-29.0
+G0 X29.9 Y-29.0
+G1 Z10
+G0 X29.8 Y-55.0
+G1 Z0
+G0 X29.900000000000002 Y-55.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X29.900000000000002 Y-55.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X51.1 Y-55.0
+G1 Z10
+G0 X51.0 Y-51.2
+G1 Z0
+G0 X51.0 Y-51.1
+G0 X51.0 Y-32.9
+G1 Z10
+G0 X30.000000000000004 Y-32.9
+G1 Z0
+G0 X30.000000000000004 Y-33.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X30.000000000000004 Y-33.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X30.0 Y-51.2
+G1 Z10
+G0 X47.2 Y-33.0
+G1 Z0
+G0 X47.10000000000001 Y-33.0
+G0 X33.9 Y-33.0
+G1 Z10
+G0 X33.9 Y-51.0
+G1 Z0
+G0 X34.0 Y-51.0
+G0 X47.199999999999996 Y-51.0
+G1 Z10
+G0 X47.0 Y-47.2
+G1 Z0
+G0 X47.0 Y-47.1
+G0 X47.0 Y-36.9
+G1 Z10
+G0 X34.0 Y-36.9
+G1 Z0
+G0 X34.0 Y-37.0
+G0 X34.0 Y-47.1
+G1 Z10
+G0 X43.2 Y-37.0
+G1 Z0
+G0 X43.1 Y-37.0
+; Refilling started
+; Setting color to: 4
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-98.0
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X43.1 Y-37.0
+G1 Z0
+; Done setting color to: orange
+; Refilling done
+G0 X37.9 Y-37.0
+G1 Z10
+G0 X37.9 Y-47.0
+G1 Z0
+G0 X38.0 Y-47.0
+G0 X43.3 Y-47.0
+G1 Z10
+G0 X43.0 Y-43.2
+G1 Z0
+G0 X43.0 Y-43.099999999999994
+G0 X43.0 Y-40.8
+G1 Z10
+G0 X38.0 Y-40.8
+G1 Z0
+G0 X38.0 Y-40.900000000000006
+G0 X38.0 Y-43.3
+G1 Z10
+; green
+G1 Z10
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X38.0 Y-43.3
+G1 Z0
+; Done setting color to: green
+G1 Z10
+G1 Z0
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X38.0 Y-43.3
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X63.0 Y-118.0
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X63.0 Y-118.0
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X63.0 Y-68.0
+G1 Z10
+G0 X59.2 Y-68.0
+G1 Z0
+G0 X59.1 Y-68.0
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X59.1 Y-68.0
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X18.0 Y-68.0
+G1 Z10
+G0 X18.0 Y-71.8
+G1 Z0
+G0 X18.0 Y-71.9
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X18.0 Y-71.9
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X18.0 Y-118.0
+G1 Z10
+G0 X21.8 Y-117.99999999999999
+G1 Z0
+G0 X21.900000000000002 Y-118.0
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X21.900000000000002 Y-118.0
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X59.1 Y-118.0
+G1 Z10
+G0 X59.3 Y-71.99999999999999
+G1 Z0
+G0 X59.199999999999996 Y-71.99999999999999
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X59.199999999999996 Y-71.99999999999999
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X21.8 Y-72.0
+G1 Z10
+G0 X21.8 Y-114.00000000000001
+G1 Z0
+G0 X21.900000000000002 Y-114.00000000000001
+G0 X59.0 Y-114.0
+G1 Z10
+G0 X58.99999999999999 Y-110.2
+G1 Z0
+G0 X59.0 Y-110.1
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X59.0 Y-110.1
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X59.0 Y-75.8
+G1 Z10
+G0 X22.0 Y-75.8
+G1 Z0
+G0 X22.0 Y-75.9
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X22.0 Y-75.9
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X22.0 Y-110.2
+G1 Z10
+G0 X55.2 Y-76.00000000000001
+G1 Z0
+G0 X55.1 Y-76.0
+G0 X25.9 Y-76.0
+G1 Z10
+G0 X25.9 Y-109.99999999999999
+G1 Z0
+G0 X26.0 Y-110.0
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X26.0 Y-110.0
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X55.1 Y-110.0
+G1 Z10
+G0 X55.0 Y-106.2
+G1 Z0
+G0 X55.0 Y-106.1
+G0 X55.0 Y-79.8
+G1 Z10
+G0 X25.999999999999996 Y-79.8
+G1 Z0
+G0 X26.0 Y-79.9
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X26.0 Y-79.9
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X26.0 Y-106.19999999999999
+G1 Z10
+G0 X51.300000000000004 Y-80.0
+G1 Z0
+G0 X51.199999999999996 Y-80.0
+G0 X29.9 Y-80.0
+G1 Z10
+G0 X29.8 Y-106.00000000000001
+G1 Z0
+G0 X29.900000000000002 Y-106.0
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X29.900000000000002 Y-106.0
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X51.1 Y-106.0
+G1 Z10
+G0 X51.0 Y-102.3
+G1 Z0
+G0 X51.0 Y-102.19999999999999
+G0 X51.0 Y-83.8
+G1 Z10
+G0 X30.0 Y-83.8
+G1 Z0
+G0 X30.0 Y-83.9
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X30.0 Y-83.9
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X30.0 Y-102.2
+G1 Z10
+G0 X47.2 Y-84.0
+G1 Z0
+G0 X47.1 Y-84.0
+G0 X33.9 Y-84.0
+G1 Z10
+G0 X33.9 Y-102.0
+G1 Z0
+G0 X34.0 Y-102.0
+G0 X47.1 Y-102.0
+G1 Z10
+G0 X47.0 Y-98.30000000000001
+G1 Z0
+G0 X47.0 Y-98.19999999999999
+G0 X47.0 Y-87.80000000000001
+G1 Z10
+G0 X34.0 Y-87.80000000000001
+G1 Z0
+G0 X34.0 Y-87.9
+; Refilling started
+; Setting color to: 5
+; Cleaning started
+G1 Z10
+G55 
+G0 X0 Y0 Z0
+G0 Z-20
+G91 
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G0 Y-30
+G0 Y30
+G1 Z10
+; Cleaning done
+G56 
+G0 Z8
+G0 X0 Y0
+G0 Z0
+G91 
+G0 Y-122.5
+G0 Z-21.5
+G0 X8
+G0 X-16
+G0 X8
+G0 Y4
+G0 Y-8
+G0 Y4
+G90 
+G54 
+G1 Z10
+G0 X34.0 Y-87.9
+G1 Z0
+; Done setting color to: green
+; Refilling done
+G0 X34.0 Y-98.19999999999999
+G1 Z10
+G0 X43.2 Y-88.0
+G1 Z0
+G0 X43.1 Y-88.0
+G0 X37.9 Y-88.0
+G1 Z10
+G0 X37.9 Y-98.0
+G1 Z0
+G0 X38.0 Y-98.0
+G0 X43.1 Y-98.0
+G1 Z10
+G0 X43.0 Y-94.3
+G1 Z0
+G0 X43.0 Y-94.19999999999999
+G0 X43.0 Y-91.8
+G1 Z10
+G0 X38.0 Y-91.79999999999998
+G1 Z0
+G0 X38.0 Y-91.9
+G0 X38.0 Y-94.3
+G1 Z10

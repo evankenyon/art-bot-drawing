@@ -16,6 +16,7 @@ from Paint_CNC import Paint_CNC
 from sklearn.cluster import KMeans
 from collections import defaultdict
 import os, sys, time
+from grid import Grid
 
 class AutoDraw(object):
     def __init__(self, name, blur = 0):
@@ -47,10 +48,10 @@ class AutoDraw(object):
 
         # 30 cm x 18 cm
 
-        xRatio = 18/30
-        yDim = 150
-        xDim = yDim * xRatio
-        self.dim = (yDim, xDim)
+        self.xRatio = 18/30
+        self.yDim = 150
+        self.xDim = self.yDim * self.xRatio
+        self.dim = (self.yDim, self.xDim)
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
         self.startY = ((1 - self.scale) / 2)*self.dim[1]
@@ -385,30 +386,78 @@ class AutoDraw(object):
                 newCommands.append(commands[index])
                 prevNonUpOrDownCommand = commands[index]
 
+        preCondensedCommands = []
+
         for index in range(len(newCommands)):
             if newCommands[index] == color:
-                cnc.set_paint_color(color)
+                preCondensedCommands.append(color)
+                # cnc.set_paint_color(color)
             elif newCommands[index] == None:
                 continue
             elif newCommands[index] == 'UP' or newCommands[index - 1] == color:
                 if index + 1 == len(newCommands):
-                    cnc.up()
+                    preCondensedCommands.append('UP')
+                    # cnc.up()
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-                    cnc.up()
+                    preCondensedCommands.append('UP')
+                    # cnc.up()
             elif newCommands[index] == 'DOWN':
                 if newCommands[index - 2] == color:
-                    cnc.g1(z=5)
+                    preCondensedCommands.append('UP')
+                    # cnc.g1(z=5)
                 elif index + 1 == len(newCommands):
-                    cnc.down()
+                    preCondensedCommands.append('DOWN')
+                    # cnc.down()
                 elif newCommands[index + 1] != 'UP' and newCommands[index + 1] != 'DOWN':
-                    cnc.down()
+                    preCondensedCommands.append('DOWN')
+                    # cnc.down()
             else:
                 # print(newCommands[index])
                 # print(newCommands[index])
                 if newCommands[index - 4] == color:
-                    cnc.down()
-                cnc.g1(x=int(newCommands[index][1]),y=-int(newCommands[index][0]))
-        return newCommands
+                    preCondensedCommands.append('DOWN')
+                    # cnc.down()
+                preCondensedCommands.append((float(newCommands[index][1]), -float(newCommands[index][0])))
+                # cnc.g1(x=float(newCommands[index][1]),y=-float(newCommands[index][0]))
+        
+        # print(preCondensedCommands)
+
+        condensedCommands = []
+        grid = Grid(self.xDim, -self.yDim)
+
+        for index in range(len(preCondensedCommands)):
+            if preCondensedCommands[index] == color:
+                condensedCommands.append(color)
+                # cnc.set_paint_color(color)
+            elif preCondensedCommands[index] == 'UP':
+                condensedCommands.append('UP')
+                # cnc.up()
+            elif preCondensedCommands[index] == 'DOWN':
+                condensedCommands.append('DOWN')
+                # cnc.down()
+            elif index + 1 >= len(preCondensedCommands):
+                continue
+            elif preCondensedCommands[index + 1]  == color or preCondensedCommands[index + 1]  == 'UP' or preCondensedCommands[index + 1]  == 'DOWN':
+                continue
+            else:
+                condensedCommands.append(grid.getParsedCommands(preCondensedCommands[index][0], preCondensedCommands[index][1], preCondensedCommands[index + 1][0], preCondensedCommands[index + 1][1]))
+        
+
+        print(condensedCommands)
+        for command in condensedCommands:
+            if command == color:
+                # condensedCommands.append(color)
+                cnc.set_paint_color(color)
+            elif command == 'UP':
+                # condensedCommands.append('UP')
+                cnc.up()
+            elif command == 'DOWN':
+                # condensedCommands.append('DOWN')
+                cnc.down()
+            else:
+                cnc.g1(x=command[0], y=command[1])
+
+        return condensedCommands
 
 
 def main(image_file_path, gcode_file_path, with_color, blur=0):

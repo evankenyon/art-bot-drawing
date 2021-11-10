@@ -85,7 +85,8 @@ def pixel_order_compose(*funcs):
 class CNC(object):
     
     fp_gcode = None
-    pen_up_height = 1
+    # Changed from 1 to 10 to get better clearance
+    pen_up_height = 10
     pen_down_height = 0
     enable_echo = False
     if __name__ == "main": 

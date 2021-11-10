@@ -198,7 +198,7 @@ if __name__ == '__main__':
 
     visualizer_parser = argparse.ArgumentParser()
 
-    visualizer_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in parenthetical comments... if this flag is provided, these colors should be used in visualization")
+    visualizer_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in gcode comments; if this flag is provided, colors in comments will be parsed, if not black will be used as default")
     visualizer_parser.add_argument("-v", default=False, action="store_true", help="Print debug statements")
     visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
     visualizer_parser.add_argument("artType", type=str, help="String indicating type of art the visualizer should render (choices: pen, watercolor)")

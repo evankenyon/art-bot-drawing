@@ -1,5 +1,5 @@
 from cnc import CNC
-import math
+import math as m
 
 
 # Define clean command
@@ -7,15 +7,16 @@ import math
 
 class Paint_CNC(CNC):
     pass
-    
+
     stroke_distance = 0
     absolute_coords = True
     current_position = [0,0,0] # x, y, z
     current_coordinate_system = 54
     THRESHOLD = 50
-    pen_paint_height = -21.5
-    pen_water_height = -20
     current_color = "black"
+    pen_paint_height = -28.5
+    pen_water_height = -27
+    current_color = 0
     # Default coordinate system is defined here as G54
 
     def g0(self, x=None, y=None, z=None):
@@ -25,7 +26,7 @@ class Paint_CNC(CNC):
             return super().g0(x=x,y=y,z=z)
         if self.pen_down:
             dx, dy = self.__calculate_difference(x,y)
-            self.stroke_distance += math.sqrt(dx**2 + dy**2)
+            self.stroke_distance += m.sqrt(dx**2 + dy**2)
             print("dx {} dy {}".format(dx,dy))
             print(self.stroke_distance)
             if self.stroke_distance > self.THRESHOLD:
@@ -39,6 +40,7 @@ class Paint_CNC(CNC):
     def refill(self):
         self.comment("Refilling started")
         self.set_paint_color(self.current_color)
+        self.down()
         self.comment("Refilling done")
     def clean(self):
         # Set coordinate system to G54, then 0
@@ -53,12 +55,13 @@ class Paint_CNC(CNC):
         # self.__return_to_last_painting_position()        
 
     def set_paint_color(self, color):
-        self.comment("Setting color to: {}".format(color_num))
+        self.comment("Setting color to: {}".format(color))
         color_to_num = {"black": 0, "purple": 1, "red": 2, "yellow": 3, "orange": 4, "green": 5, "blue": 6, "brown": 7}
         color_num = color_to_num[color]
         # get some water, clean the brush
         self.clean()
         self.current_color = color
+        self.stroke_distance = 0
         # find coordinate based on color number
         relative_y_coord = color_num*24.5
         # set to paint coordinate system
@@ -71,11 +74,33 @@ class Paint_CNC(CNC):
         self.g91()
         self.g0(y=-relative_y_coord)
         # touch paint
+        self.g90()
         self.g0(z=self.pen_paint_height)
+        self.g91()
         self.__move_brush_around_paint()
         self.__return_to_last_painting_position()
         self.comment("Done setting color to: {}".format(color))
 
+    def set_threshold(self, new_threshold):
+        self.THRESHOLD = new_threshold
+    def set_current_position(self,x=0,y=0,z=0):
+        self.current_position = [x,y,z]
+    # -- Shape methods --
+    # x_offset is the offset from 0,0 (define where origin is)
+    # y_offset is the offset from 0,0 
+    # method allows for placement of multiple circles
+    def circle(self, x_offset, y_offset, radius):
+        # self.set_current_position(x,y)
+        # x = round(radius*m.cos(radians),3) + x_offset
+        # y = round(radius*m.sin(radians),3) + y_offset
+        for theta in range(360):
+            radians = (m.pi/180)*theta
+            x = round(radius*m.cos(radians),3) + x_offset
+            y = round(radius*m.sin(radians),3) + y_offset
+            self.g0(x=x,y=y)
+            if theta==0:
+                self.down()
+        self.up()
     # -- Private methods --
     def __move_brush_around_paint(self):
         self.g0(x=8)
@@ -97,7 +122,6 @@ class Paint_CNC(CNC):
         self.g54()
         self.up()
         self.g0(x=self.current_position[0],y=self.current_position[1])
-        self.down()
     def __update_position(self,x, y, z):
         # dx, dy = self.__calculate_difference(x,y)
         if self.current_coordinate_system == 54:

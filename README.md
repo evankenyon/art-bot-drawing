@@ -45,8 +45,17 @@ Moves down to touch the paint
 Impliments the move_brush_around_paint function
 Zeros
 
-### move_brush_around_paint
-To move the bursh back and forth in a paint well to pick up more of the color
+### circle
+Creates a circle, given x,y coordinates and radius
 
 Method:
-Moves back and forth along the x and y axes in assorted increments 
+Goes to initial spot, where theta == 0, then puts brush down
+Uses polar coordinates to create a circle, based on given origin coordinates and radius parameters
+Lifts brush up at the end
+
+### set_current_coordinates
+Sets the return coordinates that are used in set_paint_color/refill to whatever is passed in parameter
+
+### set_threshold
+Set the length the brush will paint until it needs to be refilled
+

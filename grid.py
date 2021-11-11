@@ -54,8 +54,8 @@ class Grid(object):
             #             allLocations.append([abs(y) + yD, x + xD])
             #             if self.gridLocations[abs(y) + yD][x + xD]:
             #                 numFilled += 1.0
-            for xD in range(-int(self.range/self.size), int(self.range/self.size)):
-                for yD in range(-int(self.range/self.size), int(self.range/self.size)):
+            for xD in range(int(self.range/self.size)):
+                for yD in range(int(self.range/self.size)):
                     if x + xD < len(self.gridLocations[0]) and abs(y) + yD < len(self.gridLocations):
                         allLocations.append([abs(y) + yD, x + xD])
                         if self.gridLocations[abs(y) + yD][x + xD]:

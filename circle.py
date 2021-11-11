@@ -5,16 +5,14 @@
 
 from Paint_CNC import Paint_CNC
 import math as m
-def circle(radius, cnc):
-    for theta in range(360):
-        radians = (m.pi/180)*theta
-        x = round(radius*m.cos(radians),3)
-        y = round(radius*m.sin(radians),3)
-        cnc.g0(x=x,y=y)
-        if theta==0:
-            cnc.down()
-        if theta==350:
-            print("this d")
+# def circle(radius, cnc):
+#     for theta in range(360):
+#         radians = (m.pi/180)*theta
+#         x = round(radius*m.cos(radians),3)
+#         y = round(radius*m.sin(radians),3)
+#         cnc.g0(x=x,y=y)
+#         if theta==0:
+#             cnc.down()
 
 
 def start():
@@ -26,7 +24,14 @@ def start():
     return cnc
 
 if __name__ == '__main__':
+    circle_radius_1 = 20
+    circle_radius_2 = 30
     cnc = start()
-    cnc.set_paint_color(6)
-    circle(radius=20,cnc=cnc)
+    cnc.set_paint_color(1)
+    cnc.circle(0,-30,circle_radius_1)
+    cnc.set_paint_color(2)
+    cnc.circle(0,-40,circle_radius_1)
+    cnc.set_paint_color(5)
+    cnc.circle(0,-50,circle_radius_1)
+    # cnc.up()
     # polygon(100, 10, cnc)

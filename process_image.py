@@ -13,6 +13,7 @@ import pyautogui as pg
 import kdtree
 import operator
 from Paint_CNC import Paint_CNC
+from cnc import CNC
 from sklearn.cluster import KMeans
 from collections import defaultdict
 import os, sys, time
@@ -424,51 +425,72 @@ class AutoDraw(object):
 
         condensedCommands = []
         grid = Grid(self.xDim, -self.yDim)
-
-        # for index in range(len(preCondensedCommands)):
-        #     if preCondensedCommands[index] == color:
-        #         condensedCommands.append(color)
-        #         # cnc.set_paint_color(color)
-        #     elif preCondensedCommands[index] == 'UP':
-        #         condensedCommands.append('UP')
-        #         # cnc.up()
-        #     elif preCondensedCommands[index] == 'DOWN':
-        #         condensedCommands.append('DOWN')
-        #         # cnc.down()
-        #     elif index + 1 >= len(preCondensedCommands):
-        #         continue
-        #     elif preCondensedCommands[index + 1]  == color or preCondensedCommands[index + 1]  == 'UP' or preCondensedCommands[index + 1]  == 'DOWN':
-        #         continue
-        #     else:
-        #         condensedCommands.extend(grid.getParsedCommands(preCondensedCommands[index][0], preCondensedCommands[index][1], preCondensedCommands[index + 1][0], preCondensedCommands[index + 1][1]))
+        isUp = False
+        for index in range(len(preCondensedCommands)):
+            if preCondensedCommands[index] == color:
+                condensedCommands.append(color)
+                # cnc.set_paint_color(color)
+            elif preCondensedCommands[index] == 'UP':
+                condensedCommands.append('UP')
+                isUp = True
+                # cnc.up()
+            elif preCondensedCommands[index] == 'DOWN':
+                condensedCommands.append('DOWN')
+                isUp = False
+                # cnc.down()
+            elif index + 1 >= len(preCondensedCommands):
+                continue
+            elif preCondensedCommands[index + 1]  == color or preCondensedCommands[index + 1]  == 'UP' or preCondensedCommands[index + 1]  == 'DOWN':
+                continue
+            else:
+                if isUp:
+                    condensedCommands.extend(preCondensedCommands[index][0], preCondensedCommands[index])
+                if not isUp:
+                    condensedCommands.extend(grid.getParsedCommands(preCondensedCommands[index][0], preCondensedCommands[index][1], preCondensedCommands[index + 1][0], preCondensedCommands[index + 1][1]))
         
 
-        print(condensedCommands)
-        prevCommand = (-1000, 1000)
-        isUp = True
-        for command in preCondensedCommands:
+        # print(condensedCommands)
+        # realCondensedCommands = []
+
+        # addUpOrDown = True
+        # for index in len(condensedCommands):
+        #     if index + 1 >= len(condensedCommands):
+        #         realCondensedCommands.append(condensedCommands[index])
+        #         continue
+        #     if condensedCommands[index+1] == 'UP' or condensedCommands[index + 1] == 'DOWN':
+        #         if condensedCommands[index] != 'UP' and condensedCommands[index] != 'DOWN':
+        #             realCondensedCommands.append(condensedCommands[index])
+        #     if condensedCommands[index+1] != 'UP' and condensedCommands[index+1] != 'DOWN':
+        #         realCondensedCommands.append(condensedCommands[index])
+
+
+
+
+        # prevCommand = (-1000, 1000)
+        # isUp = True
+        for command in condensedCommands:
             if command == color:
                 # condensedCommands.append(color)
                 prevCommand = command
-                cnc.set_paint_color(color)
+                # cnc.set_paint_color(color)
             elif command == 'UP':
-                isUp = True
+                # isUp = True
                 # condensedCommands.append('UP')
-                prevCommand = command
+                # prevCommand = command
                 cnc.up()
             elif command == 'DOWN':
-                isUp = False
+                # isUp = False
                 # condensedCommands.append('DOWN')
-                if prevCommand != 'DOWN' and prevCommand != 'UP' and prevCommand != color:
-                    cnc.g0(x=prevCommand[0], y=prevCommand[1])
-                prevCommand = command
+                # if prevCommand != 'DOWN' and prevCommand != 'UP' and prevCommand != color:
+                    # cnc.g0(x=prevCommand[0], y=prevCommand[1])
+                # prevCommand = command
                 cnc.down()
             else:
-                if command != prevCommand and not isUp:
+                # if command != prevCommand and not isUp:
                     cnc.g0(x=command[0], y=command[1])
-                prevCommand = command
+                # prevCommand = command
 
-        return preCondensedCommands
+        return condensedCommands
 
 
 def main(image_file_path, gcode_file_path, with_color, blur=0):
@@ -479,7 +501,7 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
         commands = drawing.drawOutline()
     # commands += drawing.drawOutline()
     
-    cnc = Paint_CNC()
+    cnc = CNC()
     cnc.open(gcode_file_path)
 
     cnc.g90()

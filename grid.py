@@ -8,6 +8,7 @@ class Grid(object):
     def __init__(self, xDim, yDim):
         self.xDim = xDim
         self.yDim = yDim
+        self.allLines = []
         self.gridLocations = []
         self.size = 0.1
         self.range = 2
@@ -25,50 +26,40 @@ class Grid(object):
 
 
     def getParsedCommands(self, startX, startY, endX, endY):
-        self.count = 0
+        if (startX, startY, endX, endY) in self.allLines or (endX, endY, startX, startY) in self.allLines:
+            print("test")
+        self.allLines.extend((startX, startY, endX, endY))
+        self.count += 1
+        print(self.count)
         commands = []
-        xStep = 0
-        yStep = 0
         numSteps = 0
-
-        if startY < endY:
-            yStep = self.size
-        elif startY > endY:
-            yStep = -self.size
-        else:
-            yStep = 0
-
-        if startX < endX:
-            xStep = self.size
-        elif startX > endX:
-            xStep = -self.size
-            
-        else:
-            xStep = 0
-
 
         currX = startX
         currY = startY
         numSteps = int(math.sqrt((endX - startX)**2 + (endY - startY)**2)/0.1)
         step = 0
-        # print(numSteps)
-        # currStartX = currX
-        # currStartY = currY
-        # print(numSteps)
+
         locationsToSetTrue = []
         while step <= numSteps:
-            # print(step)
             x = int(currX/0.1)
             y = int(currY/0.1)
             allLocations = []
             numFilled = 0.0
-            for xD in range(int(self.range/self.size)):
-                for yD in range(int(self.range/self.size)):
+
+            # Simplified for loop, doesn't seem to be working when I tested the squares
+
+            # for xD in range(-int(self.range/self.size), int(self.range/self.size)):
+            #     for yD in range(-int(self.range/self.size), int(self.range/self.size)):
+            #         if x+xD >= 0 and abs(y)+yD >=0 and x + xD < len(self.gridLocations[0]) and abs(y) + yD < len(self.gridLocations):
+            #             allLocations.append([abs(y) + yD, x + xD])
+            #             if self.gridLocations[abs(y) + yD][x + xD]:
+            #                 numFilled += 1.0
+            for xD in range(-int(self.range/self.size), int(self.range/self.size)):
+                for yD in range(-int(self.range/self.size), int(self.range/self.size)):
                     if x + xD < len(self.gridLocations[0]) and abs(y) + yD < len(self.gridLocations):
                         allLocations.append([abs(y) + yD, x + xD])
                         if self.gridLocations[abs(y) + yD][x + xD]:
                             numFilled += 1.0
-
                     if yD != 0 and xD != 0 and x + xD < len(self.gridLocations[0]) and abs(y) - yD >= 0:
                         allLocations.append([abs(y) - yD, x + xD])
                         if self.gridLocations[abs(y) - yD][x + xD]:
@@ -80,37 +71,45 @@ class Grid(object):
                             numFilled += 1.0
 
                     if yD != 0 and xD != 0 and x - xD >= 0 and abs(y) - yD >= 0:
-
                         allLocations.append([abs(y) - yD, x - xD])
                         if self.gridLocations[abs(y) - yD][x - xD]:
                             numFilled += 1.0
             
+            # percentage of nearby locations that are already filled
             numFilled /= (self.range/self.size) * (self.range/self.size) * 2
-            # print(numFilled)
-            # print(numFilled)
 
+            # if none of the nearby locations are filled, paint this step
             if numFilled <= 0:  
                 locationsToSetTrue.extend(allLocations)
                 if self.isUp:
                     self.isUp = False
                     commands.append('DOWN')
                 commands.append((currX, currY))
+
+            # Otherwise, go to beginning of this step and go up
             else:    
                 commands.append((currX, currY))
                 if not self.isUp:
                     commands.append('UP')
-                self.isUp = True
-        
+                    self.isUp = True
+
+            # find next x and y for beginning of next step based on vector math
+            # formula provided by Dr. Bletsch
             percentDone = float(step+1)/float(numSteps)
             currX = (1-percentDone) * startX + percentDone * endX
             currY = (1-percentDone) * startY + percentDone * endY
             step += 1
 
+        # Set locations to true that should be set to true AFTER for loop so that
+        # lines don't get messed up along the way
         for location in locationsToSetTrue:
             self.gridLocations[location[0]][location[1]] = True
         
-        # print(commands)
+        # return commands
+        return self.__parseCommands(startX, startY, commands)
 
+
+    def __parseCommands(self, startX, startY, commands):
         parsedCommands = []
         
         realStartX = startX
@@ -119,6 +118,8 @@ class Grid(object):
         realEndY = startY
         shouldCutOff = False
         nextCommandStart = False
+        # Basically, we only want up to two x,y coordinates between any up/down command
+        # since "DOWN", (1,0), (1, 0.1), (1, 0.2), "UP" is equivalent to "DOWN", (1,0), (1, 0.2), "UP"
         for command in commands:
             if command == 'UP' or command == 'DOWN':
                 parsedCommands.append((realStartX, realStartY))
@@ -141,6 +142,9 @@ class Grid(object):
         # return parsedCommands
         realParsedCommands = []
 
+        # Shouldn't have more than one x,y coordinate between an up command and a down command
+        # since it only matters what the last x,y coordinate is
+        # ex. "UP", (1, 1), (2,1), (3,1), "DOWN" is equivalent to "UP", (3,1), "DOWN"
         shouldAdd = True
         for index in range(len(parsedCommands)):
             if(parsedCommands[index] == 'UP'):
@@ -153,68 +157,7 @@ class Grid(object):
                 shouldAdd = True
             if(shouldAdd):
                 realParsedCommands.append(parsedCommands[index])
-
-
-
+        
+        
         return realParsedCommands
 
-    def __getNearbyGridLocations(self, row, column, orientation):
-        gridLocations = []
-        if orientation == 'x':
-            currRow = row
-            while currRow < row + 20 and currRow > 0 and currRow < len(self.gridLocations):
-                gridLocations.append(self.gridLocations[currRow][column])
-                currRow += 1
-
-            currRow = row - 1
-            while currRow > row - 20 and currRow > 0 and currRow < len(self.gridLocations):
-                gridLocations.append(self.gridLocations[currRow][column])
-                currRow -= 1
-
-        elif orientation == 'y':
-            currCol = column
-            # print(currCol)
-            # print(column)
-            # print(self.gridLocations[0])
-            while currCol < column + 20 and currCol > 0 and currCol < len(self.gridLocations[0]):
-                gridLocations.append(self.gridLocations[row][currCol])
-                currCol += 1
-
-            currCol = column - 1
-            while currCol > column - 20 and currCol > 0 and currCol < len(self.gridLocations[0]):
-                gridLocations.append(self.gridLocations[row][currCol])
-                currCol -= 1
-
-        elif orientation == 'xy':
-            currCol = column
-            currRow = row
-            while currCol < column + 20 and currRow > 0 and currRow < len(self.gridLocations) and currCol > 0 and currCol < len(self.gridLocations[0]):
-                gridLocations.append(self.gridLocations[row][currCol])
-                currCol += 1
-                currRow += 1
-
-            currCol = column - 1
-            currRow = row - 1
-            while currCol > row - 20 and currRow > 0 and currRow < len(self.gridLocations) and currCol > 0 and currCol < len(self.gridLocations[0]):
-                gridLocations.append(self.gridLocations[row][currCol])
-                currCol -= 1
-                currRow -= 1
-        
-        return gridLocations
-        
-
-
-
-    def __findGridLocation(self, x, y):
-        # Right now the gcode is all integers, might have to change if we go the 
-        # scale down route (i.e. scale up picture for detail when creating initial commands, then scale 
-        # down for usage on CNC)
-
-        # print("is this even being called?")
-        # print(str(x) + ", " + str(y))
-        for gridLocationRow in self.gridLocations:
-            # print(gridLocationRow)
-            for gridLocation in gridLocationRow:
-                # print(str(gridLocation.getXPos()) + ", " + str(gridLocation.getYPos()))
-                if gridLocation.getXPos() == x and gridLocation.getYPos() == y:
-                    return gridLocation

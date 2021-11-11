@@ -47,9 +47,11 @@ class Grid(object):
             numFilled = 0.0
 
             # Simplified for loop, doesn't seem to be working when I tested the squares
-
+            # count = 0
             # for xD in range(-int(self.range/self.size), int(self.range/self.size)):
             #     for yD in range(-int(self.range/self.size), int(self.range/self.size)):
+            #         # count += 1
+            #         # print(count)
             #         if x+xD >= 0 and abs(y)+yD >=0 and x + xD < len(self.gridLocations[0]) and abs(y) + yD < len(self.gridLocations):
             #             allLocations.append([abs(y) + yD, x + xD])
             #             if self.gridLocations[abs(y) + yD][x + xD]:
@@ -76,7 +78,7 @@ class Grid(object):
                             numFilled += 1.0
             
             # percentage of nearby locations that are already filled
-            numFilled /= (self.range/self.size) * (self.range/self.size) * 2
+            numFilled /= (self.range/self.size) * (self.range/self.size) * 4
 
             # if none of the nearby locations are filled, paint this step
             if numFilled <= 0:  

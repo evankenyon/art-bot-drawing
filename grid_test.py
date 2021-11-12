@@ -1,39 +1,35 @@
 from grid import Grid
 
 def main():
+    realPreCondensedCommands = ['UP', 'brown', (41.0, -30.0), 'DOWN', (42.0, -30.0), (42.0, -29.0), (43.0, -28.0), 'UP', (44.0, -26.0), 'DOWN', (44.0, -25.0), 'UP', (45.0, -24.0), 'DOWN', (46.0, -23.0), 'UP', (47.0, -22.0), 'DOWN', (47.0, -21.0), 'UP', (53.0, -17.0), 'DOWN', (54.0, -17.0)]
+    condensedCommands = []
+
     grid = Grid(100, -100)
-    # print(grid.getParsedCommands(63, -68, 63, -17))
-    # print(grid.getParsedCommands(63, -17, 18, -17))
-    # print(grid.getParsedCommands(18, -17, 18, -67))
-    # print(grid.getParsedCommands(18, -67, 62, -67))
+    isUp = False
+    for index in range(len(realPreCondensedCommands)):
+        if realPreCondensedCommands[index] == 'brown':
+            condensedCommands.append('brown')
+            # cnc.set_paint_color(color)
+        elif realPreCondensedCommands[index] == 'UP':
+            condensedCommands.append('UP')
+            isUp = True
+            # cnc.up()
+        elif realPreCondensedCommands[index] == 'DOWN':
+            condensedCommands.append('DOWN')
+            isUp = False
+            # cnc.down()
+        elif index + 1 >= len(realPreCondensedCommands):
+            continue
+        elif realPreCondensedCommands[index + 1]  == 'brown' or realPreCondensedCommands[index + 1]  == 'UP' or realPreCondensedCommands[index + 1]  == 'DOWN':
+            condensedCommands.append(realPreCondensedCommands[index])
+        else:
+            if isUp:
+                print("test")
+                condensedCommands.append(realPreCondensedCommands[index])
+            if not isUp:
+                condensedCommands.extend(grid.getParsedCommands(realPreCondensedCommands[index][0], realPreCondensedCommands[index][1], realPreCondensedCommands[index + 1][0], realPreCondensedCommands[index + 1][1]))
+        print(condensedCommands)
+    # print(condensedCommands)
 
-    # print(grid.getParsedCommands(5, -19, 6, -19))
-    # print(grid.getParsedCommands(6, -19, 6, -15))
-    # print(grid.getParsedCommands(6, -15, 0, -8))
-
-    # print(grid.getParsedCommands(3, -7, 4, -9))
-    # print(grid.getParsedCommands(4, -9, 4, -11))
-
-    # print(grid.getParsedCommands(0, 0, 1, 0))
-    # print(grid.getParsedCommands(1, 0, 0, 0))
-
-    # print(grid.getParsedCommands(68, -63, 67, -61))
-    # print(grid.getParsedCommands(67, -61, 67, -58))
-    # print(grid.getParsedCommands(68, -63, 67, -61))
-
-    print(grid.getParsedCommands(1, 1, 0, 0))
-    print(grid.getParsedCommands(1, 1, 0, 0))
-
-    # G0 X68.0 Y-63.0
-    # G0 X67.0 Y-61.0
-    # G0 X67.0 Y-58.0
-
-
-    # G1 X18.0 Y-17.0
-    # G1 X18.0 Y-67.0
-    # G1 X62.0 Y-67.0
-    # G1 X62.0 Y-17.0
-    # G1 X18.0 Y-17.0
-    # G1 X18.0 Y-67.0
 if __name__ == "__main__":
     main()

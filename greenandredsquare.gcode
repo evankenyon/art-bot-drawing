@@ -19,6 +19,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -35,8 +36,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X0 Y0
 G1 Z0
 ; Done setting color to: orange
@@ -58,6 +59,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -74,8 +76,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X0 Y0
 G1 Z0
 ; Done setting color to: orange
@@ -97,6 +99,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -112,9 +115,9 @@ G0 X8
 G0 Y4
 G0 Y-8
 G0 Y4
-G90 
-G54 
-G1 Z10
+G90
+G1 Z0 
+G54
 G0 X63.0 Y-68.0
 G1 Z0
 ; Done setting color to: orange
@@ -140,6 +143,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -156,8 +160,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X59.1 Y-17.0
 G1 Z0
 ; Done setting color to: orange
@@ -183,6 +187,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -199,8 +204,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X18.0 Y-20.900000000000002
 G1 Z0
 ; Done setting color to: orange
@@ -226,6 +231,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -242,8 +248,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X21.900000000000002 Y-67.0
 G1 Z0
 ; Done setting color to: orange
@@ -269,6 +275,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -285,8 +292,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X59.199999999999996 Y-20.999999999999996
 G1 Z0
 ; Done setting color to: orange
@@ -317,6 +324,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -333,8 +341,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X21.900000000000002 Y-63.0
 G1 Z0
 ; Done setting color to: orange
@@ -360,6 +368,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -375,9 +384,9 @@ G0 X8
 G0 Y4
 G0 Y-8
 G0 Y4
-G90 
-G54 
-G1 Z10
+G90
+G1 Z0 
+G54
 G0 X22.0 Y-24.900000000000002
 G1 Z0
 ; Done setting color to: orange
@@ -408,6 +417,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -424,8 +434,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X26.0 Y-59.0
 G1 Z0
 ; Done setting color to: orange
@@ -456,6 +466,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -472,8 +483,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X26.0 Y-29.0
 G1 Z0
 ; Done setting color to: orange
@@ -504,6 +515,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -520,8 +532,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
-G54 
-G1 Z10
+G1 Z0
+G54
 G0 X29.900000000000002 Y-55.0
 G1 Z0
 ; Done setting color to: orange
@@ -552,6 +564,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -568,8 +581,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X30.000000000000004 Y-33.0
 G1 Z0
 ; Done setting color to: orange
@@ -615,6 +628,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -631,8 +645,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X43.1 Y-37.0
 G1 Z0
 ; Done setting color to: orange
@@ -671,6 +685,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -687,8 +702,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X38.0 Y-43.3
 G1 Z0
 ; Done setting color to: green
@@ -710,6 +725,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -726,8 +742,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X38.0 Y-43.3
 G1 Z0
 ; Done setting color to: green
@@ -749,6 +765,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -765,8 +782,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X63.0 Y-118.0
 G1 Z0
 ; Done setting color to: green
@@ -792,6 +809,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -808,8 +826,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X59.1 Y-68.0
 G1 Z0
 ; Done setting color to: green
@@ -835,6 +853,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -851,8 +870,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X18.0 Y-71.9
 G1 Z0
 ; Done setting color to: green
@@ -878,6 +897,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -894,8 +914,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X21.900000000000002 Y-118.0
 G1 Z0
 ; Done setting color to: green
@@ -921,6 +941,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -937,8 +958,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X59.199999999999996 Y-71.99999999999999
 G1 Z0
 ; Done setting color to: green
@@ -969,6 +990,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -985,8 +1007,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X59.0 Y-110.1
 G1 Z0
 ; Done setting color to: green
@@ -1012,6 +1034,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -1028,8 +1051,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X22.0 Y-75.9
 G1 Z0
 ; Done setting color to: green
@@ -1060,6 +1083,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -1075,9 +1099,9 @@ G0 X8
 G0 Y4
 G0 Y-8
 G0 Y4
-G90 
+G90
+G1 Z0
 G54 
-G1 Z10
 G0 X26.0 Y-110.0
 G1 Z0
 ; Done setting color to: green
@@ -1108,6 +1132,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -1124,8 +1149,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X26.0 Y-79.9
 G1 Z0
 ; Done setting color to: green
@@ -1156,6 +1181,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -1172,8 +1198,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X29.900000000000002 Y-106.0
 G1 Z0
 ; Done setting color to: green
@@ -1204,6 +1230,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -1220,8 +1247,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X30.0 Y-83.9
 G1 Z0
 ; Done setting color to: green
@@ -1262,6 +1289,7 @@ G0 Y-30
 G0 Y30
 G0 Y-30
 G0 Y30
+G90
 G1 Z10
 ; Cleaning done
 G56 
@@ -1278,8 +1306,8 @@ G0 Y4
 G0 Y-8
 G0 Y4
 G90 
+G1 Z0
 G54 
-G1 Z10
 G0 X34.0 Y-87.9
 G1 Z0
 ; Done setting color to: green

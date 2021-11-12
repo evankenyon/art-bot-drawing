@@ -46,10 +46,13 @@ class Paint_CNC(CNC):
         self.up()
         self.g55()
         # If zero is set correctly, we should be at one end of the water basin
-        self.g0(x=0,y=0,z=0)
+        self.g0(z=0)
+        self.g0(x=0,y=0)
         self.__move_brush_around_water()
+        self.g90()
         self.up()
         self.comment("Cleaning done")
+        
         # self.__return_to_last_painting_position()        
 
     def set_paint_color(self, color):
@@ -94,8 +97,9 @@ class Paint_CNC(CNC):
             self.g0(y=30)
     def __return_to_last_painting_position(self):
         self.g90()
+        self.g0(z=0)
         self.g54()
-        self.up()
+        # self.up()
         self.g0(x=self.current_position[0],y=self.current_position[1])
         self.down()
     def __update_position(self,x, y, z):

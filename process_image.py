@@ -420,75 +420,85 @@ class AutoDraw(object):
                     # cnc.down()
                 preCondensedCommands.append((float(newCommands[index][1]), -float(newCommands[index][0])))
                 # cnc.g1(x=float(newCommands[index][1]),y=-float(newCommands[index][0]))
+
+        realPreCondensedCommands = []
         
-        # print(preCondensedCommands)
+        isUp = False
+        prevCommand = None
+        for command in preCondensedCommands:
+            if command == color:
+                realPreCondensedCommands.append(color)
+            if command == 'UP':
+                if not isUp:
+                    realPreCondensedCommands.append('UP')
+                isUp = True
+            elif command == 'DOWN':
+                if isUp:
+                    realPreCondensedCommands.append(prevCommand)
+                    realPreCondensedCommands.append('DOWN')
+                    isUp = False
+            else:
+                if not isUp:
+                    realPreCondensedCommands.append(command)
+                prevCommand = command
+
+        # print(realPreCondensedCommands)
 
         condensedCommands = []
         grid = Grid(self.xDim, -self.yDim)
         isUp = False
-        for index in range(len(preCondensedCommands)):
-            if preCondensedCommands[index] == color:
+        for index in range(len(realPreCondensedCommands)):
+            if realPreCondensedCommands[index] == color:
                 condensedCommands.append(color)
                 # cnc.set_paint_color(color)
-            elif preCondensedCommands[index] == 'UP':
+            elif realPreCondensedCommands[index] == 'UP':
                 condensedCommands.append('UP')
                 isUp = True
                 # cnc.up()
-            elif preCondensedCommands[index] == 'DOWN':
+            elif realPreCondensedCommands[index] == 'DOWN':
                 condensedCommands.append('DOWN')
                 isUp = False
                 # cnc.down()
-            elif index + 1 >= len(preCondensedCommands):
+            elif index + 1 >= len(realPreCondensedCommands):
                 continue
-            elif preCondensedCommands[index + 1]  == color or preCondensedCommands[index + 1]  == 'UP' or preCondensedCommands[index + 1]  == 'DOWN':
-                continue
+            elif realPreCondensedCommands[index + 1]  == color or realPreCondensedCommands[index + 1]  == 'UP' or realPreCondensedCommands[index + 1]  == 'DOWN':
+                condensedCommands.append(realPreCondensedCommands[index])
             else:
                 if isUp:
-                    condensedCommands.extend(preCondensedCommands[index][0], preCondensedCommands[index])
+                    print("test")
+                    condensedCommands.append(realPreCondensedCommands[index])
                 if not isUp:
-                    condensedCommands.extend(grid.getParsedCommands(preCondensedCommands[index][0], preCondensedCommands[index][1], preCondensedCommands[index + 1][0], preCondensedCommands[index + 1][1]))
-        
+                    condensedCommands.extend(grid.getParsedCommands(realPreCondensedCommands[index][0], realPreCondensedCommands[index][1], realPreCondensedCommands[index + 1][0], realPreCondensedCommands[index + 1][1]))
+
 
         # print(condensedCommands)
-        # realCondensedCommands = []
 
-        # addUpOrDown = True
-        # for index in len(condensedCommands):
-        #     if index + 1 >= len(condensedCommands):
-        #         realCondensedCommands.append(condensedCommands[index])
-        #         continue
-        #     if condensedCommands[index+1] == 'UP' or condensedCommands[index + 1] == 'DOWN':
-        #         if condensedCommands[index] != 'UP' and condensedCommands[index] != 'DOWN':
-        #             realCondensedCommands.append(condensedCommands[index])
-        #     if condensedCommands[index+1] != 'UP' and condensedCommands[index+1] != 'DOWN':
-        #         realCondensedCommands.append(condensedCommands[index])
-
-
-
-
-        # prevCommand = (-1000, 1000)
-        # isUp = True
+        prevCommand = (-1000, 1000)
+        isUp = False
+        count = 0
         for command in condensedCommands:
+            count += 1
+            # print("final loop" + str(count))
             if command == color:
                 # condensedCommands.append(color)
                 prevCommand = command
                 # cnc.set_paint_color(color)
             elif command == 'UP':
-                # isUp = True
+                isUp = True
                 # condensedCommands.append('UP')
-                # prevCommand = command
+                prevCommand = command
                 cnc.up()
             elif command == 'DOWN':
-                # isUp = False
+                isUp = False
                 # condensedCommands.append('DOWN')
-                # if prevCommand != 'DOWN' and prevCommand != 'UP' and prevCommand != color:
-                    # cnc.g0(x=prevCommand[0], y=prevCommand[1])
-                # prevCommand = command
+                if prevCommand != 'DOWN' and prevCommand != 'UP' and prevCommand != color:
+                    cnc.g0(x=prevCommand[0], y=prevCommand[1])
+                prevCommand = command
                 cnc.down()
             else:
-                # if command != prevCommand and not isUp:
+                if command != prevCommand and not isUp:
                     cnc.g0(x=command[0], y=command[1])
-                # prevCommand = command
+                prevCommand = command
 
         return condensedCommands
 

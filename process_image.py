@@ -450,15 +450,12 @@ class AutoDraw(object):
         for index in range(len(realPreCondensedCommands)):
             if realPreCondensedCommands[index] == color:
                 condensedCommands.append(color)
-                # cnc.set_paint_color(color)
             elif realPreCondensedCommands[index] == 'UP':
                 condensedCommands.append('UP')
                 isUp = True
-                # cnc.up()
             elif realPreCondensedCommands[index] == 'DOWN':
                 condensedCommands.append('DOWN')
                 isUp = False
-                # cnc.down()
             elif index + 1 >= len(realPreCondensedCommands):
                 continue
             elif realPreCondensedCommands[index + 1]  == color or realPreCondensedCommands[index + 1]  == 'UP' or realPreCondensedCommands[index + 1]  == 'DOWN':
@@ -478,19 +475,15 @@ class AutoDraw(object):
         count = 0
         for command in condensedCommands:
             count += 1
-            # print("final loop" + str(count))
             if command == color:
-                # condensedCommands.append(color)
                 prevCommand = command
                 # cnc.set_paint_color(color)
             elif command == 'UP':
                 isUp = True
-                # condensedCommands.append('UP')
                 prevCommand = command
                 cnc.up()
             elif command == 'DOWN':
                 isUp = False
-                # condensedCommands.append('DOWN')
                 if prevCommand != 'DOWN' and prevCommand != 'UP' and prevCommand != color:
                     cnc.g0(x=prevCommand[0], y=prevCommand[1])
                 prevCommand = command

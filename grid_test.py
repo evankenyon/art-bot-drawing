@@ -1,7 +1,11 @@
 from grid import Grid
 
 def main():
-    realPreCondensedCommands = ['UP', 'brown', (41.0, -30.0), 'DOWN', (42.0, -30.0), (42.0, -29.0), (43.0, -28.0), 'UP', (44.0, -26.0), 'DOWN', (44.0, -25.0), 'UP', (45.0, -24.0), 'DOWN', (46.0, -23.0), 'UP', (47.0, -22.0), 'DOWN', (47.0, -21.0), 'UP', (53.0, -17.0), 'DOWN', (54.0, -17.0)]
+    # grid = Grid(100, -100)
+    # print(grid.getParsedCommands(0, 0, 1, 1))
+    # print(grid.getParsedCommands(1, 1, 2, 2))
+
+    realPreCondensedCommands = [(0,0), (1,1), (2,2)]
     condensedCommands = []
 
     grid = Grid(100, -100)
@@ -29,7 +33,7 @@ def main():
             if not isUp:
                 condensedCommands.extend(grid.getParsedCommands(realPreCondensedCommands[index][0], realPreCondensedCommands[index][1], realPreCondensedCommands[index + 1][0], realPreCondensedCommands[index + 1][1]))
         print(condensedCommands)
-    # print(condensedCommands)
+    print(condensedCommands)
 
 if __name__ == "__main__":
     main()

@@ -392,7 +392,7 @@ class AutoDraw(object):
         for index in range(len(newCommands)):
             if newCommands[index] == color:
                 preCondensedCommands.append(color)
-                # cnc.set_paint_color(color)
+                cnc.set_paint_color(color)
             elif newCommands[index] == None:
                 continue
             elif newCommands[index] == 'UP' or newCommands[index - 1] == color:
@@ -462,7 +462,6 @@ class AutoDraw(object):
                 condensedCommands.append(realPreCondensedCommands[index])
             else:
                 if isUp:
-                    print("test")
                     condensedCommands.append(realPreCondensedCommands[index])
                 if not isUp:
                     condensedCommands.extend(grid.getParsedCommands(realPreCondensedCommands[index][0], realPreCondensedCommands[index][1], realPreCondensedCommands[index + 1][0], realPreCondensedCommands[index + 1][1]))
@@ -504,7 +503,7 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
         commands = drawing.drawOutline()
     # commands += drawing.drawOutline()
     
-    cnc = CNC()
+    cnc = Paint_CNC()
     cnc.open(gcode_file_path)
 
     cnc.g90()

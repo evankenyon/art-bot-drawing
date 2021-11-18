@@ -26,11 +26,9 @@ class Grid(object):
 
 
     def getParsedCommands(self, startX, startY, endX, endY):
-        if (startX, startY, endX, endY) in self.allLines or (endX, endY, startX, startY) in self.allLines:
-            print("test")
+        self.isUp = False
         self.allLines.extend((startX, startY, endX, endY))
         self.count += 1
-        print(self.count)
         commands = []
         numSteps = 0
 
@@ -107,8 +105,16 @@ class Grid(object):
         for location in locationsToSetTrue:
             self.gridLocations[location[0]][location[1]] = True
         
+        newCommands = self.__parseCommands(startX, startY, commands)
+
+        if (startX == 47 and startY == -17) and (endX == 46 and endY == -18):
+            print(self.count)
+            print(newCommands)
+        if (startX == 46 and startY == -18) and (endX == 47 and endY == -19):
+            print(self.count)
+            print(newCommands)
         # return commands
-        return self.__parseCommands(startX, startY, commands)
+        return newCommands
 
 
     def __parseCommands(self, startX, startY, commands):

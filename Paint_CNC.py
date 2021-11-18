@@ -54,7 +54,6 @@ class Paint_CNC(CNC):
         self.g90()
         self.up()
         self.comment("Cleaning done")
-        
         # self.__return_to_last_painting_position()        
 
     def set_paint_color(self, color):

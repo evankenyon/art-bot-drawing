@@ -87,9 +87,8 @@ class CNC(object):
     enable_echo = True
     pen_down = False
 
-    pen_up_height = -15
-    pen_down_height = -25
-
+    pen_up_height = -3
+    pen_down_height = -30
     
     fp_gcode = None
     # Changed from 1 to 10 to get better clearance
@@ -295,9 +294,11 @@ class CNC(object):
             old_py = py
 
     def up(self): 
+        self.g90()
         self.g1(z=self.pen_up_height)
         self.pen_down = False
     def down(self): 
+        self.g90()
         self.pen_down = True
         self.g1(z=self.pen_down_height)
         

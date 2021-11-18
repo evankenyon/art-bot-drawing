@@ -6,6 +6,7 @@ def start():
     cnc.g0(z=5)
     cnc.f(3000)
     cnc.g0(z=5)
+    cnc.clean()
     cnc.set_paint_color(4)
     return cnc
 start()

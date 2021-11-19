@@ -24,6 +24,65 @@ class Grid(object):
             self.gridLocations.append(row)
             rowCount += 1
 
+    def shouldAdd(self, startX, startY):
+        self.isUp = False
+        shouldAdd = False
+
+        currX = startX
+        currY = startY
+
+        locationsToSetTrue = []
+        x = int(currX/0.1)
+        y = int(currY/0.1)
+        allLocations = []
+        numFilled = 0.0
+
+        # Simplified for loop, doesn't seem to be working when I tested the squares
+        # count = 0
+        # for xD in range(-int(self.range/self.size), int(self.range/self.size)):
+        #     for yD in range(-int(self.range/self.size), int(self.range/self.size)):
+        #         # count += 1
+        #         # print(count)
+        #         if x+xD >= 0 and abs(y)+yD >=0 and x + xD < len(self.gridLocations[0]) and abs(y) + yD < len(self.gridLocations):
+        #             allLocations.append([abs(y) + yD, x + xD])
+        #             if self.gridLocations[abs(y) + yD][x + xD]:
+        #                 numFilled += 1.0
+        for xD in range(int(self.range/self.size)):
+            for yD in range(int(self.range/self.size)):
+                if x + xD < len(self.gridLocations[0]) and abs(y) + yD < len(self.gridLocations):
+                    allLocations.append([abs(y) + yD, x + xD])
+                    if self.gridLocations[abs(y) + yD][x + xD]:
+                        numFilled += 1.0
+                if yD != 0 and xD != 0 and x + xD < len(self.gridLocations[0]) and abs(y) - yD >= 0:
+                    allLocations.append([abs(y) - yD, x + xD])
+                    if self.gridLocations[abs(y) - yD][x + xD]:
+                        numFilled += 1.0
+
+                if yD != 0 and xD != 0 and x - xD >= 0 and abs(y) + yD < len(self.gridLocations):
+                    allLocations.append([abs(y) + yD, x - xD])
+                    if self.gridLocations[abs(y) + yD][x - xD]:
+                        numFilled += 1.0
+
+                if yD != 0 and xD != 0 and x - xD >= 0 and abs(y) - yD >= 0:
+                    allLocations.append([abs(y) - yD, x - xD])
+                    if self.gridLocations[abs(y) - yD][x - xD]:
+                        numFilled += 1.0
+            
+            # percentage of nearby locations that are already filled
+            numFilled /= (self.range/self.size) * (self.range/self.size) * 4
+
+            # if none of the nearby locations are filled, paint this step
+            if numFilled <= 0: 
+                locationsToSetTrue.extend(allLocations)
+                for location in locationsToSetTrue:
+                    self.gridLocations[location[0]][location[1]] = True
+                shouldAdd = True
+
+            # Otherwise, go to beginning of this step and go up
+            else:    
+                shouldAdd = False
+
+            return shouldAdd
 
     def getParsedCommands(self, startX, startY, endX, endY):
         self.isUp = False

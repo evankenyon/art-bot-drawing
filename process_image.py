@@ -392,7 +392,7 @@ class AutoDraw(object):
         for index in range(len(newCommands)):
             if newCommands[index] == color:
                 preCondensedCommands.append(color)
-                cnc.set_paint_color(color)
+                # cnc.set_paint_color(color)
             elif newCommands[index] == None:
                 continue
             elif newCommands[index] == 'UP' or newCommands[index - 1] == color:
@@ -447,7 +447,11 @@ class AutoDraw(object):
         condensedCommands = []
         grid = Grid(self.xDim, -self.yDim)
         isUp = False
+        print(len(realPreCondensedCommands))
+        count = 0
         for index in range(len(realPreCondensedCommands)):
+            count += 1
+            print(count)
             if realPreCondensedCommands[index] == color:
                 condensedCommands.append(color)
             elif realPreCondensedCommands[index] == 'UP':
@@ -459,7 +463,12 @@ class AutoDraw(object):
             elif index + 1 >= len(realPreCondensedCommands):
                 continue
             elif realPreCondensedCommands[index + 1]  == color or realPreCondensedCommands[index + 1]  == 'UP' or realPreCondensedCommands[index + 1]  == 'DOWN':
-                condensedCommands.append(realPreCondensedCommands[index])
+                if not isUp:
+                    if(grid.shouldAdd(realPreCondensedCommands[index][0], realPreCondensedCommands[index][1])):
+                        condensedCommands.append(realPreCondensedCommands[index])
+                if isUp: 
+                    condensedCommands.append(realPreCondensedCommands[index])
+                # continue
             else:
                 if isUp:
                     condensedCommands.append(realPreCondensedCommands[index])
@@ -476,7 +485,7 @@ class AutoDraw(object):
             count += 1
             if command == color:
                 prevCommand = command
-                # cnc.set_paint_color(color)
+                cnc.set_paint_color(color)
             elif command == 'UP':
                 isUp = True
                 prevCommand = command
@@ -484,7 +493,7 @@ class AutoDraw(object):
             elif command == 'DOWN':
                 isUp = False
                 if prevCommand != 'DOWN' and prevCommand != 'UP' and prevCommand != color:
-                    cnc.g1(x=prevCommand[0], y=prevCommand[1])
+                    cnc.g0(x=prevCommand[0], y=prevCommand[1])
                 prevCommand = command
                 cnc.down()
             else:

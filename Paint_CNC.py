@@ -52,7 +52,8 @@ class Paint_CNC(CNC):
         self.g0(x=0,y=0)
         self.__move_brush_around_water()
         self.g90()
-        self.up()
+        self.g0(z=0)
+        # self.up()
         self.comment("Cleaning done")
         # self.__return_to_last_painting_position()        
 
@@ -69,7 +70,7 @@ class Paint_CNC(CNC):
         # set to paint coordinate system
         self.g56()
         # zero
-        self.g0(z=8)
+        self.g0(z=4)
         self.g0(x=0, y=0)
         self.g0(z=0)
         # self.g0(x=0,y=0,z=0)
@@ -157,8 +158,11 @@ class Paint_CNC(CNC):
         self.current_coordinate_system = 56
         return super().g56()
     def g90(self):
-        self.absolute_coords = True
+        # if not self.absolute_coords:
         return super().g90()
+        # self.absolute_coords = True
     def g91(self):
-        self.absolute_coords = False
-        return super().g91()
+        # if self.absolute_coords:
+        return super().g91() 
+        # self.absolute_coords = False
+        

@@ -15,6 +15,7 @@ class GLines :
     gLine = []
     isG0G1 = False
     isPenDown = False
+    isMechanical = False
     penColor = ""
     command = ''
     update = [0,0,0] # [x,y,z]
@@ -70,16 +71,22 @@ class GLines :
         if len(self.gLine) < 1:
             verboseprint("No Entry")
 
-        elif self.gLine[0][0] != ';':
+        if self.gLine[0][0] == ";":
+
+            if self.gLine[1] == "Refilling":
+                self.comamnd = self.gLine[1:]
+                self.mechanicalCommand()
+
+            elif self.gLine[1] == "Setting":
+                self.command = self.gLine[1:]
+                verboseprint(self.command)
+                self.description = ' '.join(self.gLine)
+                self.updateColor()
+
+        elif not self.isMechanical:
             # print(self.gLine)
             self.command = self.gLine[0]
             self.updatePos()
-
-        elif self.gLine[0][0] == ';':
-            self.command = 'Color change'
-            verboseprint(self.command)
-            self.description = ' '.join(self.gLine)
-            self.updateColor()
 
         return self.command
 
@@ -128,6 +135,13 @@ class GLines :
         if self.penColor != color:
             self.penColor = color
             print("Changing pen color to %s" % self.penColor)
+
+    def mechanicalCommand(self):
+        line = self.gLine
+        if self.isMechanical:
+            self.isMechanical = False
+        else:
+            self.isMechanical = True
 
 
 def main(gcode_file_path, color, artType, resolution):
@@ -179,6 +193,8 @@ def main(gcode_file_path, color, artType, resolution):
             # Record each position
             strokeData.append(gd.getPos(resolution))
         elif not gd.getPenDown():
+            print(strokeData)
+            
             #if the end of a stroke is reached (ie the pen is raised), end the previous stroke and create a new one
             #print(strokeData)
             

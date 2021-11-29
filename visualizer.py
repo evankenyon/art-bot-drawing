@@ -117,7 +117,7 @@ class GLines :
         possible_colors['none'] = [0, 0, 0]
         
         ret = possible_colors[color]
-        ret.append(int(0.3*255))
+        ret.append(int(0.5*255))
 
         if artType == "watercolor":
             return tuple(ret)
@@ -145,6 +145,7 @@ class GLines :
 
 
 def main(gcode_file_path, color, artType, resolution):
+    name = gcode_file_path.split("/")[1].split(".")[0]
     gcode_file = open(gcode_file_path)
     gcode_lines = gcode_file.readlines()
     verboseprint("lines: ",len(gcode_lines))
@@ -161,7 +162,6 @@ def main(gcode_file_path, color, artType, resolution):
         width = resolution
     
     image = Image.new(mode = "RGB", size = imgDim, color=(255, 255, 255))
-    print(image)
     if artType == "watercolor":
         draw = ImageDraw.Draw(image, "RGBA")
     else:
@@ -193,8 +193,6 @@ def main(gcode_file_path, color, artType, resolution):
             # Record each position
             strokeData.append(gd.getPos(resolution))
         elif not gd.getPenDown():
-            print(strokeData)
-            
             #if the end of a stroke is reached (ie the pen is raised), end the previous stroke and create a new one
             #print(strokeData)
             
@@ -207,6 +205,7 @@ def main(gcode_file_path, color, artType, resolution):
     draw.line(strokeData, fill=gd.getColor(), joint=None, width=width)
 
     image.show()
+    image.save(os.path.join(os.getcwd(), f"{name}_visualized.jpg"))
 
 if __name__ == '__main__':
 

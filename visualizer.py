@@ -1,8 +1,5 @@
 import os
 import sys
-from PIL import Image
-import matplotlib.pyplot as plt
-import matplotlib.axes as Axes
 import numpy as np
 from PIL import Image, ImageDraw
 

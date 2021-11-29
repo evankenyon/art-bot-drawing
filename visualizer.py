@@ -1,8 +1,5 @@
 import os
 import sys
-from PIL import Image
-import matplotlib.pyplot as plt
-import matplotlib.axes as Axes
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -15,6 +12,7 @@ class GLines :
     gLine = []
     isG0G1 = False
     isPenDown = False
+    isMechanical = False
     penColor = ""
     command = ''
     update = [0,0,0] # [x,y,z]
@@ -70,16 +68,22 @@ class GLines :
         if len(self.gLine) < 1:
             verboseprint("No Entry")
 
-        elif self.gLine[0][0] != ';':
+        if self.gLine[0][0] == ";":
+
+            if self.gLine[1] == "Refilling":
+                self.comamnd = self.gLine[1:]
+                self.mechanicalCommand()
+
+            elif self.gLine[1] == "Setting":
+                self.command = self.gLine[1:]
+                verboseprint(self.command)
+                self.description = ' '.join(self.gLine)
+                self.updateColor()
+
+        elif not self.isMechanical:
             # print(self.gLine)
             self.command = self.gLine[0]
             self.updatePos()
-
-        elif self.gLine[0][0] == ';':
-            self.command = 'Color change'
-            verboseprint(self.command)
-            self.description = ' '.join(self.gLine)
-            self.updateColor()
 
         return self.command
 
@@ -110,7 +114,7 @@ class GLines :
         possible_colors['none'] = [0, 0, 0]
         
         ret = possible_colors[color]
-        ret.append(int(0.3*255))
+        ret.append(int(0.5*255))
 
         if artType == "watercolor":
             return tuple(ret)
@@ -129,8 +133,16 @@ class GLines :
             self.penColor = color
             print("Changing pen color to %s" % self.penColor)
 
+    def mechanicalCommand(self):
+        line = self.gLine
+        if self.isMechanical:
+            self.isMechanical = False
+        else:
+            self.isMechanical = True
+
 
 def main(gcode_file_path, color, artType, resolution):
+    name = gcode_file_path.split("/")[1].split(".")[0]
     gcode_file = open(gcode_file_path)
     gcode_lines = gcode_file.readlines()
     verboseprint("lines: ",len(gcode_lines))
@@ -147,7 +159,6 @@ def main(gcode_file_path, color, artType, resolution):
         width = resolution
     
     image = Image.new(mode = "RGB", size = imgDim, color=(255, 255, 255))
-    print(image)
     if artType == "watercolor":
         draw = ImageDraw.Draw(image, "RGBA")
     else:
@@ -191,6 +202,7 @@ def main(gcode_file_path, color, artType, resolution):
     draw.line(strokeData, fill=gd.getColor(), joint=None, width=width)
 
     image.show()
+    image.save(os.path.join(os.getcwd(), f"{name}_visualized.jpg"))
 
 if __name__ == '__main__':
 

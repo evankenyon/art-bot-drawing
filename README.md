@@ -59,3 +59,16 @@ Sets the return coordinates that are used in set_paint_color/refill to whatever 
 ### set_threshold
 Set the length the brush will paint until it needs to be refilled
 
+## Visualizing and Validating G-Code for Painting (visualizer.py)
+
+Instructions for use:
+1. Open command line/terminal from the project directory (ex. cd ~/art-bot-drawing)
+2. Run program using Python using the command: "python ./visualizer.py" along with the following command line arguments/switches
+* --usecolor: Colors for various lines are stored in gcode comments; if this flag is provided, colors in comments will be parsed, if not black will be used as default
+* -v: Verbose setting--Include this flag to print debug statements
+* gcode_file_path: Path to G-Code file you would like visualized
+* artType: String indicating type of art the visualizer should render (choices: pen, watercolor)
+* resolution: conversion factor between millimeters declared in G-code and pixel resolution (recommended value between 50 and 200)
+
+Example use: python ./visualizer.py --usecolor ./mike.gcode watercolor 100
+With these command line arguments, the visualizer will run using color and watercolor settings (wider pen width and translucent alpha value), with a resolution conversion factor of 100. It will access the G-Code instructions contained in the file "mike.gcode" in your current working directory and create a digital rendering of what this G-Code would look like if painted by the CNC robot. This render will be stored as "mike_visualized.jpg" in the same working directory folder and will be displayed immediately in your default photo viewing application.

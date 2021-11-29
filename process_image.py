@@ -20,7 +20,7 @@ import os, sys, time
 from grid import Grid
 
 class AutoDraw(object):
-    def __init__(self, name, blur = 0):
+    def __init__(self, name, blur = 0, xDim=None, yDim=None):
         # Tunable parameters
         self.detail = 1
 #         self.scale = 7/12
@@ -38,7 +38,6 @@ class AutoDraw(object):
         self.possible_colors['red'] = [171, 24, 26]
         self.possible_colors['purple'] = [54, 35, 88]
         self.possible_colors['black'] = [31, 25, 33]
-
         # Load Image. Switch axes to match computer screen
         self.img = cv2.imread(name)
         self.blur = blur
@@ -48,10 +47,13 @@ class AutoDraw(object):
 #         self.dim = pg.size()
 
         # 30 cm x 18 cm
-
-        self.xRatio = 18/30
-        self.yDim = 150
-        self.xDim = self.yDim * self.xRatio
+        if xDim == None and yDim == None:
+            self.xRatio = 18/30
+            self.yDim = 150
+            self.xDim = self.yDim * self.xRatio
+        else:
+            self.xDim = xDim
+            self.yDim = yDim
         self.dim = (self.yDim, self.xDim)
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
@@ -514,8 +516,8 @@ class AutoDraw(object):
 
             return condensedCommands
 
-def main(image_file_path, gcode_file_path, with_color, blur=0):
-    drawing = AutoDraw(image_file_path, blur=blur)
+def main(image_file_path, gcode_file_path, with_color, blur=0, xDim=None, yDim=None):
+    drawing = AutoDraw(image_file_path, blur=blur, xDim=xDim, yDim=yDim)
     if with_color:
         color_commands = drawing.draw()
     else:
@@ -562,17 +564,20 @@ if __name__ == "__main__":
     process_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
     # process_parser.add_argument("with_color", type=int, help="True for with color, false for without")
     process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
+    process_parser.add_argument("xDim", nargs="?", type=float, help="x dimension in mm")
+    process_parser.add_argument("yDim", nargs="?", type=float, help="y  dimension in mm")
     process_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in parenthetical comments... if this flag is provided, these colors should be used in visualization")
 
     args = process_parser.parse_args()
     image_file_path = args.image_file_path
     gcode_file_path = args.gcode_file_path
     with_color = args.usecolor
+    xDim = args.xDim
+    yDim = args.yDim
     blur = args.blur
 
     if not os.path.isfile(image_file_path):
         print("The reference image file specified does not exist on this path.")
         sys.exit()
-
-    main(image_file_path, gcode_file_path, with_color, blur)
+    main(image_file_path, gcode_file_path, with_color, blur, xDim, yDim)
 

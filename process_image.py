@@ -369,7 +369,7 @@ class AutoDraw(object):
 
 # In[62]:
 
-    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color):
+    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color, pen_color=False):
         newCommands = [] 
         for index in range(len(commands)):
             if(prevNonUpOrDownCommand == commands[index]):
@@ -456,6 +456,17 @@ class AutoDraw(object):
                 else:
                     cnc.g0(x=command[0], y=command[1])
             return realPreCondensedCommands
+        elif pen_color:
+            for command in realPreCondensedCommands:
+                if command == color:
+                    cnc.comment(color)
+                elif command == 'UP':
+                    cnc.up()
+                elif command == 'DOWN':
+                    cnc.down()
+                else:
+                    cnc.g0(x=command[0], y=command[1])
+            return realPreCondensedCommands
         else:
             condensedCommands = []
             grid = Grid(self.xDim, -self.yDim)
@@ -516,9 +527,10 @@ class AutoDraw(object):
 
             return condensedCommands
 
-def main(image_file_path, gcode_file_path, with_color, blur=0, xDim=None, yDim=None):
+def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=None, yDim=None):
+    print(pen_color)
     drawing = AutoDraw(image_file_path, blur=blur, xDim=xDim, yDim=yDim)
-    if with_color:
+    if with_color or pen_color:
         color_commands = drawing.draw()
     else:
         commands = drawing.drawOutline()
@@ -528,7 +540,21 @@ def main(image_file_path, gcode_file_path, with_color, blur=0, xDim=None, yDim=N
     # cnc.g1(z=0)
     prevNonUpOrDownCommand = (0, 0)
     newCommands = [] 
-    if not with_color:
+    
+    if pen_color:
+        cnc = CNC()
+        cnc.open(gcode_file_path)
+
+        cnc.g90()
+        cnc.g0(z=5)
+        cnc.f(3000)
+        cnc.g0(z=5)
+        for color in color_commands:
+            if color_commands[color]:
+                cnc.comment(color)
+                commands = color_commands[color]
+                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color, pen_color=True))
+    elif not with_color:
         cnc = CNC()
         cnc.open(gcode_file_path)
 
@@ -566,12 +592,14 @@ if __name__ == "__main__":
     process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
     process_parser.add_argument("xDim", nargs="?", type=float, help="x dimension in mm")
     process_parser.add_argument("yDim", nargs="?", type=float, help="y  dimension in mm")
-    process_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in parenthetical comments... if this flag is provided, these colors should be used in visualization")
+    process_parser.add_argument("--usecolor", default=False, action="store_true", help="If this flag is provided, we want the image to be used with watercolors")
+    process_parser.add_argument("--pencolor", default=False, action="store_true", help="If this flag is provided, we want the image to be with pen but in color")
 
     args = process_parser.parse_args()
     image_file_path = args.image_file_path
     gcode_file_path = args.gcode_file_path
     with_color = args.usecolor
+    pen_color = args.pencolor
     xDim = args.xDim
     yDim = args.yDim
     blur = args.blur
@@ -579,5 +607,5 @@ if __name__ == "__main__":
     if not os.path.isfile(image_file_path):
         print("The reference image file specified does not exist on this path.")
         sys.exit()
-    main(image_file_path, gcode_file_path, with_color, blur, xDim, yDim)
+    main(image_file_path, gcode_file_path, with_color, pen_color, blur, xDim, yDim)
 

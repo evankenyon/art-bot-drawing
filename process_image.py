@@ -370,6 +370,7 @@ class AutoDraw(object):
     def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color):
         newCommands = [] 
         for index in range(len(commands)):
+            print("pls don't break my computer")
             if(prevNonUpOrDownCommand == commands[index]):
                 continue
             if commands[index] == 'UP':

@@ -372,7 +372,6 @@ class AutoDraw(object):
     def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color, pen_color=False):
         newCommands = [] 
         for index in range(len(commands)):
-            print("pls don't break my computer")
             if(prevNonUpOrDownCommand == commands[index]):
                 continue
             if commands[index] == 'UP':
@@ -447,6 +446,7 @@ class AutoDraw(object):
 
         
         if color == "NA":
+            print("outline cnc")
             for command in realPreCondensedCommands:
                 if command == color:
                     continue
@@ -458,6 +458,7 @@ class AutoDraw(object):
                     cnc.g0(x=command[0], y=command[1])
             return realPreCondensedCommands
         elif pen_color:
+            print("pen color cnc")
             for command in realPreCondensedCommands:
                 if command == color:
                     cnc.comment(color)
@@ -469,6 +470,7 @@ class AutoDraw(object):
                     cnc.g0(x=command[0], y=command[1])
             return realPreCondensedCommands
         else:
+            print("paint cnc")
             condensedCommands = []
             grid = Grid(self.xDim, -self.yDim)
             isUp = False
@@ -543,6 +545,7 @@ def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=N
     newCommands = [] 
     
     if pen_color:
+        print("pen color")
         cnc = CNC()
         cnc.open(gcode_file_path)
 
@@ -556,6 +559,7 @@ def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=N
                 commands = color_commands[color]
                 newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color, pen_color=True))
     elif not with_color:
+        print("pen no color")
         cnc = CNC()
         cnc.open(gcode_file_path)
 
@@ -565,6 +569,7 @@ def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=N
         cnc.g0(z=5)
         newCommands = drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, "NA")
     else:
+        print("paint cnc")
         cnc = Paint_CNC()
         cnc.open(gcode_file_path)
 

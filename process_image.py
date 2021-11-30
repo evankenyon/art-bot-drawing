@@ -20,7 +20,7 @@ import os, sys, time
 from grid import Grid
 
 class AutoDraw(object):
-    def __init__(self, name, blur = 0):
+    def __init__(self, name, blur = 0, xDim=None, yDim=None):
         # Tunable parameters
         self.detail = 1
 #         self.scale = 7/12
@@ -38,7 +38,6 @@ class AutoDraw(object):
         self.possible_colors['red'] = [171, 24, 26]
         self.possible_colors['purple'] = [54, 35, 88]
         self.possible_colors['black'] = [31, 25, 33]
-
         # Load Image. Switch axes to match computer screen
         self.img = cv2.imread(name)
         self.blur = blur
@@ -48,10 +47,13 @@ class AutoDraw(object):
 #         self.dim = pg.size()
 
         # 30 cm x 18 cm
-
-        self.xRatio = 18/30
-        self.yDim = 150
-        self.xDim = self.yDim * self.xRatio
+        if xDim == None and yDim == None:
+            self.xRatio = 18/30
+            self.yDim = 150
+            self.xDim = self.yDim * self.xRatio
+        else:
+            self.xDim = xDim
+            self.yDim = yDim
         self.dim = (self.yDim, self.xDim)
         # Scale to draw inside part of screen
         self.startX = ((1 - self.scale) / 2)*self.dim[0] 
@@ -367,7 +369,7 @@ class AutoDraw(object):
 
 # In[62]:
 
-    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color):
+    def commands_to_cnc(self, cnc, commands, prevNonUpOrDownCommand, color, pen_color=False):
         newCommands = [] 
         for index in range(len(commands)):
             print("pls don't break my computer")
@@ -455,6 +457,17 @@ class AutoDraw(object):
                 else:
                     cnc.g0(x=command[0], y=command[1])
             return realPreCondensedCommands
+        elif pen_color:
+            for command in realPreCondensedCommands:
+                if command == color:
+                    cnc.comment(color)
+                elif command == 'UP':
+                    cnc.up()
+                elif command == 'DOWN':
+                    cnc.down()
+                else:
+                    cnc.g0(x=command[0], y=command[1])
+            return realPreCondensedCommands
         else:
             condensedCommands = []
             grid = Grid(self.xDim, -self.yDim)
@@ -515,9 +528,10 @@ class AutoDraw(object):
 
             return condensedCommands
 
-def main(image_file_path, gcode_file_path, with_color, blur=0):
-    drawing = AutoDraw(image_file_path, blur=blur)
-    if with_color:
+def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=None, yDim=None):
+    print(pen_color)
+    drawing = AutoDraw(image_file_path, blur=blur, xDim=xDim, yDim=yDim)
+    if with_color or pen_color:
         color_commands = drawing.draw()
     else:
         commands = drawing.drawOutline()
@@ -527,7 +541,21 @@ def main(image_file_path, gcode_file_path, with_color, blur=0):
     # cnc.g1(z=0)
     prevNonUpOrDownCommand = (0, 0)
     newCommands = [] 
-    if not with_color:
+    
+    if pen_color:
+        cnc = CNC()
+        cnc.open(gcode_file_path)
+
+        cnc.g90()
+        cnc.g0(z=5)
+        cnc.f(3000)
+        cnc.g0(z=5)
+        for color in color_commands:
+            if color_commands[color]:
+                cnc.comment(color)
+                commands = color_commands[color]
+                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color, pen_color=True))
+    elif not with_color:
         cnc = CNC()
         cnc.open(gcode_file_path)
 
@@ -563,17 +591,22 @@ if __name__ == "__main__":
     process_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
     # process_parser.add_argument("with_color", type=int, help="True for with color, false for without")
     process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
-    process_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in parenthetical comments... if this flag is provided, these colors should be used in visualization")
+    process_parser.add_argument("xDim", nargs="?", type=float, help="x dimension in mm")
+    process_parser.add_argument("yDim", nargs="?", type=float, help="y  dimension in mm")
+    process_parser.add_argument("--usecolor", default=False, action="store_true", help="If this flag is provided, we want the image to be used with watercolors")
+    process_parser.add_argument("--pencolor", default=False, action="store_true", help="If this flag is provided, we want the image to be with pen but in color")
 
     args = process_parser.parse_args()
     image_file_path = args.image_file_path
     gcode_file_path = args.gcode_file_path
     with_color = args.usecolor
+    pen_color = args.pencolor
+    xDim = args.xDim
+    yDim = args.yDim
     blur = args.blur
 
     if not os.path.isfile(image_file_path):
         print("The reference image file specified does not exist on this path.")
         sys.exit()
-
-    main(image_file_path, gcode_file_path, with_color, blur)
+    main(image_file_path, gcode_file_path, with_color, pen_color, blur, xDim, yDim)
 

@@ -91,8 +91,8 @@ class CNC(object):
     pen_down_height = -30
     
     fp_gcode = None
-    # Changed from 1 to 5 to get better clearance
-    pen_up_height = 5
+    # Changed from 1 to 2 to get better clearance
+    pen_up_height = 2
     pen_down_height = 0
     enable_echo = False
     if __name__ == "main": 

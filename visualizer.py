@@ -16,7 +16,7 @@ class GLines :
     penColor = ""
     command = ''
     update = [0,0,0] # [x,y,z]
-    drawingType = ""
+    output_type = 0
 
     def __init__(self, drawingType):
         self.update = [0,0,0]
@@ -100,7 +100,6 @@ class GLines :
 
     def getColor(self):
         color = self.penColor
-        artType = self.drawingType
         
         possible_colors = dict()
         possible_colors['brown'] = [102, 82, 86]
@@ -116,7 +115,7 @@ class GLines :
         ret = possible_colors[color]
         ret.append(int(0.5*255))
 
-        if artType == "watercolor":
+        if self.output_type == 2:
             return tuple(ret)
         else:
             return tuple(possible_colors[color])
@@ -141,25 +140,33 @@ class GLines :
             self.isMechanical = True
 
 
-def main(gcode_file_path, color, artType, resolution):
-    name = gcode_file_path.split("/")[1].split(".")[0]
+def main(gcode_file_path, color, output_type, resolution):
+    name = gcode_file_path.split("/")[-1].split(".")[0]
+    print(name)
+    output_str_lookup = {0:"outline", 1:"pen_color", 2:"watercolor"}
+    output_path = os.path.join(os.getcwd(), output_str_lookup[output_type], "visualizer_images", f"{name}.jpg")
+    
+    if not os.path.exists(output_path):
+        dirs = output_path.split("\\")[:-1]
+        os.makedirs("\\".join(dirs), exist_ok=True)
+
     gcode_file = open(gcode_file_path)
     gcode_lines = gcode_file.readlines()
     verboseprint("lines: ",len(gcode_lines))
-    gd = GLines(artType)
+    gd = GLines(output_type)
 
     xRatio = 18/30
     yDim = 150 * resolution
     xDim = int(yDim * xRatio)
     imgDim = (xDim, yDim)
 
-    if artType == "watercolor":
+    if output_type == 2:
         width = 4 * resolution
     else:
         width = resolution
     
     image = Image.new(mode = "RGB", size = imgDim, color=(255, 255, 255))
-    if artType == "watercolor":
+    if output_type == 2:
         draw = ImageDraw.Draw(image, "RGBA")
     else:
         draw = ImageDraw.Draw(image)
@@ -202,7 +209,7 @@ def main(gcode_file_path, color, artType, resolution):
     draw.line(strokeData, fill=gd.getColor(), joint=None, width=width)
 
     image.show()
-    image.save(os.path.join(os.getcwd(), f"{name}_visualized.jpg"))
+    image.save(output_path)
 
 if __name__ == '__main__':
 
@@ -213,14 +220,15 @@ if __name__ == '__main__':
     visualizer_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in gcode comments; if this flag is provided, colors in comments will be parsed, if not black will be used as default")
     visualizer_parser.add_argument("-v", default=False, action="store_true", help="Print debug statements")
     visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
-    visualizer_parser.add_argument("artType", type=str, help="String indicating type of art the visualizer should render (choices: pen, watercolor)")
+    visualizer_parser.add_argument("output_type", default=0, type=int, help="The algorithm can generate G-code to render images 3 ways. \
+    Input the corresponding int: pen outline=0, colored pen=1, watercolor=2")
     visualizer_parser.add_argument("resolution", type=int, help="conversion factor between millimeters declared in G-code and pixel resolution")
 
     args = visualizer_parser.parse_args()
     color = args.usecolor
     verbose = args.v
     gcode_file_path = args.gcode_file_path
-    artType = args.artType
+    output_type = args.output_type
     resolution = args.resolution
 
     if verbose:
@@ -237,7 +245,7 @@ if __name__ == '__main__':
         print("The G-code instruction file specified does not exist on this path.")
         sys.exit()
 
-    if not artType in ["watercolor", "pen"]:
-        raise ValueError("Invalid type of art given: current choices are watercolor and pen")
+    if output_type not in [0, 1, 2]:
+        raise ValueError("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")
 
-    main(gcode_file_path, color, artType, resolution)
+    main(gcode_file_path, color, output_type, resolution)

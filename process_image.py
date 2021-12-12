@@ -527,7 +527,15 @@ class AutoDraw(object):
 
             return condensedCommands
 
-def main(image_file_path, gcode_file_path, output_type, blur=0, xDim=None, yDim=None):
+def main(image_file_path, output_type, blur=0, xDim=None, yDim=None):
+    name = image_file_path.split("/")[1].split(".")[0]
+    output_str_lookup = {0:"outline", 1:"pen_color", 2:"watercolor"}
+    output_path = os.path.join(os.getcwd(), output_str_lookup[output_type], "gcode", f"{name}.gcode")
+    
+    if not os.path.exists(output_path):
+        dirs = output_path.split("\\")[:-1]
+        os.makedirs("\\".join(dirs), exist_ok=True)
+
     drawing = AutoDraw(image_file_path, blur=blur, xDim=xDim, yDim=yDim)
     if output_type != 0:
         color_commands = drawing.draw()
@@ -543,7 +551,7 @@ def main(image_file_path, gcode_file_path, output_type, blur=0, xDim=None, yDim=
     # for output of a black pen outline, we use the base CNC library
     if output_type == 0:
         cnc = CNC()
-        cnc.open(gcode_file_path)
+        cnc.open(output_path)
 
         cnc.g90()
         cnc.g0(z=5)
@@ -553,7 +561,7 @@ def main(image_file_path, gcode_file_path, output_type, blur=0, xDim=None, yDim=
     # for output of a colored pen drawing, we use the base CNC library and include comment metadata
     elif output_type == 1:
         cnc = CNC()
-        cnc.open(gcode_file_path)
+        cnc.open(output_path)
 
         cnc.g90()
         cnc.g0(z=5)
@@ -567,7 +575,7 @@ def main(image_file_path, gcode_file_path, output_type, blur=0, xDim=None, yDim=
     # to encode color changes, brush adjustments, etc.
     else:
         cnc = Paint_CNC()
-        cnc.open(gcode_file_path)
+        cnc.open(output_path)
         
         cnc.g90()
         cnc.g0(z=5)
@@ -588,7 +596,6 @@ if __name__ == "__main__":
     process_parser = argparse.ArgumentParser()
 
     process_parser.add_argument('image_file_path', type=str, help="Path to image file you would like turned into G-Code")
-    process_parser.add_argument("gcode_file_path", type=str, help="Path to where you want the G-Code file to be saved")
     # process_parser.add_argument("with_color", type=int, help="True for with color, false for without")
     process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
     process_parser.add_argument("xDim", nargs="?", type=float, help="x dimension in mm")
@@ -598,7 +605,6 @@ if __name__ == "__main__":
     
     args = process_parser.parse_args()
     image_file_path = args.image_file_path
-    gcode_file_path = args.gcode_file_path
     output_type = args.output_type
     xDim = args.xDim
     yDim = args.yDim
@@ -608,8 +614,7 @@ if __name__ == "__main__":
         print("The reference image file specified does not exist on this path.")
         sys.exit()
     if output_type not in [0, 1, 2]:
-        print("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")
-        sys.exit()
+        raise ValueError("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")
 
-    main(image_file_path, gcode_file_path, output_type, blur, xDim, yDim)
+    main(image_file_path, output_type, blur, xDim, yDim)
 

@@ -446,7 +446,6 @@ class AutoDraw(object):
 
         
         if color == "NA":
-            print("outline cnc")
             for command in realPreCondensedCommands:
                 if command == color:
                     continue
@@ -458,7 +457,6 @@ class AutoDraw(object):
                     cnc.g0(x=command[0], y=command[1])
             return realPreCondensedCommands
         elif pen_color:
-            print("pen color cnc")
             for command in realPreCondensedCommands:
                 if command == color:
                     cnc.comment(color)
@@ -470,7 +468,6 @@ class AutoDraw(object):
                     cnc.g0(x=command[0], y=command[1])
             return realPreCondensedCommands
         else:
-            print("paint cnc")
             condensedCommands = []
             grid = Grid(self.xDim, -self.yDim)
             isUp = False
@@ -530,10 +527,9 @@ class AutoDraw(object):
 
             return condensedCommands
 
-def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=None, yDim=None):
-    print(pen_color)
+def main(image_file_path, gcode_file_path, output_type, blur=0, xDim=None, yDim=None):
     drawing = AutoDraw(image_file_path, blur=blur, xDim=xDim, yDim=yDim)
-    if with_color or pen_color:
+    if output_type != 0:
         color_commands = drawing.draw()
     else:
         commands = drawing.drawOutline()
@@ -544,22 +540,8 @@ def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=N
     prevNonUpOrDownCommand = (0, 0)
     newCommands = [] 
     
-    if pen_color:
-        print("pen color")
-        cnc = CNC()
-        cnc.open(gcode_file_path)
-
-        cnc.g90()
-        cnc.g0(z=5)
-        cnc.f(3000)
-        cnc.g0(z=5)
-        for color in color_commands:
-            if color_commands[color]:
-                cnc.comment(color)
-                commands = color_commands[color]
-                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color, pen_color=True))
-    elif not with_color:
-        print("pen no color")
+    # for output of a black pen outline, we use the base CNC library
+    if output_type == 0:
         cnc = CNC()
         cnc.open(gcode_file_path)
 
@@ -568,20 +550,33 @@ def main(image_file_path, gcode_file_path, with_color, pen_color, blur=0, xDim=N
         cnc.f(3000)
         cnc.g0(z=5)
         newCommands = drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, "NA")
-    else:
-        print("paint cnc")
-        cnc = Paint_CNC()
+    # for output of a colored pen drawing, we use the base CNC library and include comment metadata
+    elif output_type == 1:
+        cnc = CNC()
         cnc.open(gcode_file_path)
 
         cnc.g90()
         cnc.g0(z=5)
         cnc.f(3000)
         cnc.g0(z=5)
-        for color in color_commands:
-            if color_commands[color]:
-                cnc.comment(color)
-                commands = color_commands[color]
-                newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color))
+        for color in color_commands.keys():
+            cnc.comment(color)
+            commands = color_commands[color]
+            newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color, pen_color=True))
+    # for output of a watercolor painting, we use the paint library which extends the CNC library and include comment metadata
+    # to encode color changes, brush adjustments, etc.
+    else:
+        cnc = Paint_CNC()
+        cnc.open(gcode_file_path)
+        
+        cnc.g90()
+        cnc.g0(z=5)
+        cnc.f(3000)
+        cnc.g0(z=5)
+        for color in color_commands.keys():
+            cnc.comment(color)
+            commands = color_commands[color]
+            newCommands.extend(drawing.commands_to_cnc(cnc, commands, prevNonUpOrDownCommand, color))
     
     cnc.close()
 
@@ -598,14 +593,13 @@ if __name__ == "__main__":
     process_parser.add_argument("blur", nargs="?", type=int, help="Amount of blur for image (between 0 and 2)")
     process_parser.add_argument("xDim", nargs="?", type=float, help="x dimension in mm")
     process_parser.add_argument("yDim", nargs="?", type=float, help="y  dimension in mm")
-    process_parser.add_argument("--usecolor", default=False, action="store_true", help="If this flag is provided, we want the image to be used with watercolors")
-    process_parser.add_argument("--pencolor", default=False, action="store_true", help="If this flag is provided, we want the image to be with pen but in color")
-
+    process_parser.add_argument("output_type", default=0, type=int, help="The algorithm can generate G-code to render images 3 ways. \
+    Input the corresponding int: pen outline=0, colored pen=1, watercolor=2")
+    
     args = process_parser.parse_args()
     image_file_path = args.image_file_path
     gcode_file_path = args.gcode_file_path
-    with_color = args.usecolor
-    pen_color = args.pencolor
+    output_type = args.output_type
     xDim = args.xDim
     yDim = args.yDim
     blur = args.blur
@@ -613,5 +607,9 @@ if __name__ == "__main__":
     if not os.path.isfile(image_file_path):
         print("The reference image file specified does not exist on this path.")
         sys.exit()
-    main(image_file_path, gcode_file_path, with_color, pen_color, blur, xDim, yDim)
+    if output_type not in [0, 1, 2]:
+        print("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")
+        sys.exit()
+
+    main(image_file_path, gcode_file_path, output_type, blur, xDim, yDim)
 

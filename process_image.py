@@ -611,7 +611,7 @@ if __name__ == "__main__":
     blur = args.blur
 
     if not os.path.isfile(image_file_path):
-        print("The reference image file specified does not exist on this path.")
+        raise FileNotFoundError("The reference image file specified does not exist on this path.")
         sys.exit()
     if output_type not in [0, 1, 2]:
         raise ValueError("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")

@@ -18,11 +18,11 @@ class GLines :
     update = [0,0,0] # [x,y,z]
     output_type = 0
 
-    def __init__(self, drawingType):
+    def __init__(self, output_type):
         self.update = [0,0,0]
         self.penColor = "none"
-        self.drawingType = drawingType
-
+        self.output_type = output_type
+        
     def readline(self, gline):
         verboseprint(gline)
         self.gLine = gline.split()
@@ -70,14 +70,19 @@ class GLines :
 
         if self.gLine[0][0] == ";":
 
-            if self.gLine[1] == "Refilling":
-                self.comamnd = self.gLine[1:]
+           if self.gLine[1] == "Refilling":
+                self.command = self.gLine[1:]
                 self.mechanicalCommand()
 
             elif self.gLine[1] == "Setting":
                 self.command = self.gLine[1:]
                 verboseprint(self.command)
                 self.description = ' '.join(self.gLine)
+                self.updateColor()
+
+            elif self.output_type == 1:
+                self.command = self.gLine
+                self.description = "Pen color change"
                 self.updateColor()
 
         elif not self.isMechanical:
@@ -121,7 +126,6 @@ class GLines :
             return tuple(possible_colors[color])
 
     def updateColor(self):
-        # possible_colors = {"brown": [102, 82, 86], "lightblue": [78, 151, 228], "yellow": [249, 216, 36], "orange": [238, 75, 29], "green": [56, 131, 57], "red": [171, 24, 26], "purple": [54, 35, 88], "black": [31, 25, 33]}
         line = self.gLine
         for i in line:
             if i.strip() != ";" and i.strip() != " ":
@@ -140,9 +144,8 @@ class GLines :
             self.isMechanical = True
 
 
-def main(gcode_file_path, color, output_type, resolution):
+def main(gcode_file_path, output_type, resolution):
     name = gcode_file_path.split("/")[-1].split(".")[0]
-    print(name)
     output_str_lookup = {0:"outline", 1:"pen_color", 2:"watercolor"}
     output_path = os.path.join(os.getcwd(), output_str_lookup[output_type], "visualizer_images", f"{name}.jpg")
     
@@ -217,7 +220,6 @@ if __name__ == '__main__':
 
     visualizer_parser = argparse.ArgumentParser()
 
-    visualizer_parser.add_argument("--usecolor", default=False, action="store_true", help="Colors for various lines are stored in gcode comments; if this flag is provided, colors in comments will be parsed, if not black will be used as default")
     visualizer_parser.add_argument("-v", default=False, action="store_true", help="Print debug statements")
     visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
     visualizer_parser.add_argument("output_type", default=0, type=int, help="The algorithm can generate G-code to render images 3 ways. \
@@ -225,7 +227,6 @@ if __name__ == '__main__':
     visualizer_parser.add_argument("resolution", type=int, help="conversion factor between millimeters declared in G-code and pixel resolution")
 
     args = visualizer_parser.parse_args()
-    color = args.usecolor
     verbose = args.v
     gcode_file_path = args.gcode_file_path
     output_type = args.output_type
@@ -248,4 +249,4 @@ if __name__ == '__main__':
     if output_type not in [0, 1, 2]:
         raise ValueError("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")
 
-    main(gcode_file_path, color, output_type, resolution)
+    main(gcode_file_path, output_type, resolution)

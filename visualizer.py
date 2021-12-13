@@ -4,6 +4,18 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 
+possible_colors = dict()
+possible_colors['brown'] = [102, 82, 86]
+possible_colors['blue'] = [78, 151, 228]
+possible_colors['yellow'] = [249, 216, 36]
+possible_colors['orange'] = [238, 75, 29]
+possible_colors['green'] = [56, 131, 57]
+possible_colors['red'] = [171, 24, 26]
+possible_colors['purple'] = [54, 35, 88]
+possible_colors['black'] = [31, 25, 33]
+possible_colors['none'] = [0, 0, 0]
+
+
 class GLines :
     xVal = 0
     yVal = 0
@@ -68,19 +80,19 @@ class GLines :
         if len(self.gLine) < 1:
             verboseprint("No Entry")
 
-        if self.gLine[0][0] == ";":
-
-           if self.gLine[1] == "Refilling":
+        elif self.gLine[0][0] == ";":
+            
+            if self.gLine[1] == "Refilling":
                 self.command = self.gLine[1:]
                 self.mechanicalCommand()
-
+            
             elif self.gLine[1] == "Setting":
                 self.command = self.gLine[1:]
                 verboseprint(self.command)
                 self.description = ' '.join(self.gLine)
                 self.updateColor()
 
-            elif self.output_type == 1:
+            elif self.output_type != 0:
                 self.command = self.gLine
                 self.description = "Pen color change"
                 self.updateColor()
@@ -127,9 +139,10 @@ class GLines :
 
     def updateColor(self):
         line = self.gLine
+        color = ""
         for i in line:
-            if i.strip() != ";" and i.strip() != " ":
-                color = i
+            if i.strip() in possible_colors.keys():
+                color = i.strip()
         if not color:
             return
         if self.penColor != color:
@@ -144,10 +157,10 @@ class GLines :
             self.isMechanical = True
 
 
-def main(gcode_file_path, output_type, resolution):
+def main(gcode_file_path, output_type, xDim, yDim, resolution):
     name = gcode_file_path.split("/")[-1].split(".")[0]
     output_str_lookup = {0:"outline", 1:"pen_color", 2:"watercolor"}
-    output_path = os.path.join(os.getcwd(), output_str_lookup[output_type], "visualizer_images", f"{name}.jpg")
+    output_path = os.path.join(os.getcwd(), output_str_lookup[output_type], "visualizer_images", f"{name}_visualized.jpg")
     
     if not os.path.exists(output_path):
         dirs = output_path.split("\\")[:-1]
@@ -158,9 +171,8 @@ def main(gcode_file_path, output_type, resolution):
     verboseprint("lines: ",len(gcode_lines))
     gd = GLines(output_type)
 
-    xRatio = 18/30
-    yDim = 150 * resolution
-    xDim = int(yDim * xRatio)
+    yDim =  yDim* resolution
+    xDim = xDim * resolution
     imgDim = (xDim, yDim)
 
     if output_type == 2:
@@ -224,13 +236,21 @@ if __name__ == '__main__':
     visualizer_parser.add_argument("gcode_file_path", type=str, help="Path to G-Code file you would like visualized")
     visualizer_parser.add_argument("output_type", default=0, type=int, help="The algorithm can generate G-code to render images 3 ways. \
     Input the corresponding int: pen outline=0, colored pen=1, watercolor=2")
+    visualizer_parser.add_argument("xDim", nargs="?", type=int, help="x dimension in mm")
+    visualizer_parser.add_argument("yDim", nargs="?", type=int, help="y  dimension in mm")
     visualizer_parser.add_argument("resolution", type=int, help="conversion factor between millimeters declared in G-code and pixel resolution")
 
     args = visualizer_parser.parse_args()
     verbose = args.v
     gcode_file_path = args.gcode_file_path
     output_type = args.output_type
+    xDim = args.xDim
+    yDim = args.yDim
     resolution = args.resolution
+
+    if not xDim:
+        yDim = 150
+        xDim = int(18/30 * (150))
 
     if verbose:
         def verboseprint(*args):
@@ -249,4 +269,4 @@ if __name__ == '__main__':
     if output_type not in [0, 1, 2]:
         raise ValueError("Invalid output type given. Please select either pen outline (0), colored pen(1), or watercolor (2)")
 
-    main(gcode_file_path, output_type, resolution)
+    main(gcode_file_path, output_type, xDim, yDim, resolution)

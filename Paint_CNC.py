@@ -104,6 +104,16 @@ class Paint_CNC(CNC):
             if theta==0:
                 self.down()
         self.up()
+    # x_offset is the offset from 0,0 (defines center of rectangle)
+    # y_offset is the offset from 0,0 
+    def rect(self, x_offset, y_offset, width, height):     
+        self.g0(x_offset-width/2,y_offset-height/2)
+        self.down()
+        self.g0(x_offset-width/2,y_offset+height/2)
+        self.g0(x_offset+width/2,y_offset+height/2)
+        self.g0(x_offset+width/2,y_offset-height/2)
+        self.g0(x_offset-width/2, y_offset-height/2)
+        self.up()
     # -- Private methods --
     def __move_brush_around_paint(self):
         self.g0(x=8)
